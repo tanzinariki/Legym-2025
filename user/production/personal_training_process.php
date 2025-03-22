@@ -9,7 +9,7 @@ header("Content-Type: application/json");
 
 $response = array();
 
-// If the request is a POST, process booking.
+// If the request is POST, process booking.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
     if ($conn->connect_error) {
@@ -162,22 +162,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $stmt->close();
 
+            // Return timeslots only if date is provided.
+            $timeslots = [];
             if (isset($_GET['date']) && !empty($_GET['date'])) {
                 $inputDate = $_GET['date'];
                 $formattedDate = date("Y-m-d", strtotime($inputDate));
                 $stmt2 = $conn->prepare("SELECT timeslot FROM trainer_availability WHERE trainer_id = ? AND date = ?");
                 $stmt2->bind_param("is", $trainerId, $formattedDate);
-            } else {
-                $stmt2 = $conn->prepare("SELECT timeslot FROM trainer_availability WHERE trainer_id = ? AND date >= CURDATE()");
-                $stmt2->bind_param("i", $trainerId);
+                $stmt2->execute();
+                $result2 = $stmt2->get_result();
+                while ($row = $result2->fetch_assoc()) {
+                    $timeslots[] = $row['timeslot'];
+                }
+                $stmt2->close();
             }
-            $stmt2->execute();
-            $result2 = $stmt2->get_result();
-            $timeslots = [];
-            while ($row = $result2->fetch_assoc()) {
-                $timeslots[] = $row['timeslot'];
-            }
-            $stmt2->close();
             echo json_encode([
                 'specialities' => $specialities,
                 'timeslots'    => $timeslots

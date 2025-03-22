@@ -43,6 +43,8 @@ $conn->close();
     <style>
         .required { color: red; }
         .label-training-session { margin-right: 5px; }
+        /* Hide the entire specialties wrapper by default */
+        #specialties-wrapper { display: none; }
     </style>
 </head>
 <body>
@@ -102,14 +104,11 @@ $conn->close();
                     </select>
                   </div>
                 </div>
-                <!-- Trainer Specialities -->
-                <div class="form-group">
+                <!-- Trainer Specialities Wrapper (hidden by default) -->
+                <div class="form-group" id="specialties-wrapper">
                   <label class="control-label col-lg-12">Trainer Specialities</label>
                   <div class="col-lg-12" id="trainer-specialities" style="margin-top: 10px;">
-                    <!-- Initially static; will be updated via AJAX -->
-                    <span class="label label-primary label-training-session">Weight Training</span>
-                    <span class="label label-primary label-training-session">HIIT</span>
-                    <span class="label label-primary label-training-session">Nutrition</span>
+                    <!-- Specialties will be populated here once a trainer is picked -->
                   </div>
                 </div>
                 <!-- Date Picker -->
@@ -234,57 +233,74 @@ $(document).ready(function() {
         allowInputToggle: true
     });
 
-    // When the date is changed, update available timeslots and trainer info.
+    // When trainer is changed or date is changed, update trainer info.
+    $('#trainer-name').on('change', function() {
+        updateTrainerInfo();
+    });
     $('#datepicker-readonly').on('dp.change', function(e) {
-        updateTimeslots();
+        updateTrainerInfo();
     });
 
-    // Function to update available timeslots and trainer specialties via AJAX.
-    function updateTimeslots() {
+    // Function to update trainer specialties and available timeslots.
+    function updateTrainerInfo() {
         var trainerId = $('#trainer-name').val();
         var selectedDate = $('#training_date').val(); // Expected format: "MMM DD, YYYY"
-        if (trainerId && selectedDate) {
-            $.ajax({
-                url: 'personal_training_process.php',
-                type: 'GET',
-                data: { action: 'get_trainer_info', id: trainerId, date: selectedDate, t: new Date().getTime() },
-                dataType: 'json',
-                success: function(data) {
-                    // Update trainer specialties.
-                    var specialtiesHtml = '';
-                    if (data.specialities.length > 0) {
-                        data.specialities.forEach(function(spec) {
-                            specialtiesHtml += '<span class="label label-primary label-training-session">' + spec + '</span> ';
-                        });
-                    } else {
-                        specialtiesHtml = 'No specialties available.';
-                    }
-                    $('#trainer-specialities').html(specialtiesHtml);
-                    
-                    // Update available timeslots.
-                    var timeslotHtml = '<option value="">Select Time Slot</option>';
-                    if (data.timeslots.length > 0) {
-                        data.timeslots.forEach(function(slot) {
-                            timeslotHtml += '<option value="'+slot+'">'+slot+'</option>';
-                        });
-                    } else {
-                        timeslotHtml += '<option value="">No time slots available</option>';
-                    }
-                    $('#available-time-slot').html(timeslotHtml);
-                },
-                error: function() {
-                    console.error('Error fetching trainer info.');
-                }
-            });
-        } else {
-            $('#available-time-slot').html('<option value="">Select Trainer and Date First</option>');
-        }
-    }
 
-    // Update timeslots when trainer selection changes.
-    $('#trainer-name').on('change', function() {
-        updateTimeslots();
-    });
+        // If no trainer is selected, hide the specialties wrapper and reset timeslots.
+        if (!trainerId) {
+            $('#specialties-wrapper').hide().html('');
+            $('#available-time-slot').html('<option value="">Select Trainer and Date First</option>');
+            return;
+        }
+        // Always update specialties (ignoring date) and reveal the wrapper.
+        $.ajax({
+            url: 'personal_training_process.php',
+            type: 'GET',
+            data: { action: 'get_trainer_info', id: trainerId, t: new Date().getTime() },
+            dataType: 'json',
+            success: function(data) {
+                var specialtiesHtml = '';
+                if (data.specialities && data.specialities.length > 0) {
+                    data.specialities.forEach(function(spec) {
+                        specialtiesHtml += '<span class="label label-primary label-training-session">' + spec + '</span> ';
+                    });
+                } else {
+                    specialtiesHtml = 'No specialties available.';
+                }
+                // Reveal and update the specialties wrapper.
+                $('#specialties-wrapper').html('<label class="control-label col-lg-12">Trainer Specialities</label><div class="col-lg-12" id="trainer-specialities" style="margin-top: 10px;">' + specialtiesHtml + '</div>').show();
+                
+                // Update available timeslots only if a date is selected.
+                if (selectedDate) {
+                    $.ajax({
+                        url: 'personal_training_process.php',
+                        type: 'GET',
+                        data: { action: 'get_trainer_info', id: trainerId, date: selectedDate, t: new Date().getTime() },
+                        dataType: 'json',
+                        success: function(data2) {
+                            var timeslotHtml = '<option value="">Select Time Slot</option>';
+                            if(data2.timeslots && data2.timeslots.length > 0) {
+                                data2.timeslots.forEach(function(slot) {
+                                    timeslotHtml += '<option value="'+slot+'">'+slot+'</option>';
+                                });
+                            } else {
+                                timeslotHtml += '<option value="">No time slots available</option>';
+                            }
+                            $('#available-time-slot').html(timeslotHtml);
+                        },
+                        error: function() {
+                            $('#available-time-slot').html('<option value="">Error loading timeslots</option>');
+                        }
+                    });
+                } else {
+                    $('#available-time-slot').html('<option value="">Select Date for timeslots</option>');
+                }
+            },
+            error: function() {
+                console.error('Error fetching trainer info.');
+            }
+        });
+    }
 
     // Load upcoming sessions on page load.
     $("#upcomingSessionsContainer").load("personal_training_process.php?action=get_upcoming_sessions");
@@ -313,7 +329,6 @@ $(document).ready(function() {
     });
 
     // --- Cancellation via Custom Modal ---
-    // Global variables to store booking ID and button reference.
     var currentCancelBookingId = null;
     var currentCancelButton = null;
 
@@ -323,7 +338,6 @@ $(document).ready(function() {
         $("#cancelConfirmModal").modal("show");
     });
 
-    // When user confirms cancellation in the modal.
     $("#confirmCancelBtn").on("click", function() {
         $.ajax({
             url: "personal_training_process.php",
