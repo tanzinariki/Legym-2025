@@ -4407,3 +4407,9 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 .agree-check .icheckbox_flat-green {
     margin-right: 10px;
 }
+.equal-height {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
