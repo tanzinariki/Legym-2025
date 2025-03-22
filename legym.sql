@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 21, 2025 at 04:05 PM
+-- Generation Time: Mar 22, 2025 at 01:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -189,18 +189,19 @@ CREATE TABLE `training` (
   `trainer_id` int(11) NOT NULL,
   `status` varchar(10) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `total_seats` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `training`
 --
 
-INSERT INTO `training` (`id`, `class_id`, `training_date`, `training_time`, `online_training_link`, `trainer_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, '2025-03-24', '10:00:00', NULL, 1, NULL, '2025-03-21 03:47:32', '2025-03-21 03:47:32'),
-(2, 3, '2025-03-27', '11:00:00', NULL, 5, NULL, '2025-03-21 03:47:32', '2025-03-21 03:47:32'),
-(3, 5, '2025-03-28', '13:00:00', 'https://zoom.us/j/1234567890', 4, NULL, '2025-03-21 03:49:49', '2025-03-21 03:49:49'),
-(4, 6, '2025-03-29', '16:00:00', 'https://zoom.us/j/1234567890', 3, NULL, '2025-03-21 03:49:49', '2025-03-21 03:49:49');
+INSERT INTO `training` (`id`, `class_id`, `training_date`, `training_time`, `online_training_link`, `trainer_id`, `status`, `created_at`, `updated_at`, `total_seats`) VALUES
+(1, 1, '2025-03-24', '10:00:00', NULL, 1, NULL, '2025-03-21 03:47:32', '2025-03-21 03:47:32', 5),
+(2, 3, '2025-03-27', '11:00:00', NULL, 5, NULL, '2025-03-21 03:47:32', '2025-03-21 03:47:32', 4),
+(3, 5, '2025-03-28', '13:00:00', 'https://zoom.us/j/1234567890', 4, NULL, '2025-03-21 03:49:49', '2025-03-21 03:49:49', 10),
+(4, 6, '2025-03-29', '16:00:00', 'https://zoom.us/j/1234567890', 3, NULL, '2025-03-21 03:49:49', '2025-03-21 03:49:49', 8);
 
 -- --------------------------------------------------------
 
@@ -223,9 +224,9 @@ CREATE TABLE `user` (
   `status` varchar(10) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `card_number` int(11) DEFAULT NULL,
-  `card_expire_date` date DEFAULT NULL,
-  `card_cvv` int(11) DEFAULT NULL
+  `card_number` varchar(19) DEFAULT NULL,
+  `card_expire_date` varchar(5) DEFAULT NULL,
+  `card_cvv` varchar(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -233,7 +234,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `fitness_goal`, `user_image`, `health_condition`, `membership_plan_id`, `membership_start_date`, `membership_end_date`, `status`, `created_at`, `updated_at`, `card_number`, `card_expire_date`, `card_cvv`) VALUES
-(1, 'Tanzina', 'Nasrin', 'nasrintanzina@gmail.com', '$2y$10$hCT3msBSyRk0zN1V12uoDOqhy8KWe9j/zmYKPVstHZiS2Q7C0QekW', NULL, '', NULL, NULL, NULL, NULL, NULL, '2025-03-21 05:13:58', '2025-03-21 05:13:58', NULL, NULL, NULL),
+(1, 'Tanzina', 'Nasrin', 'nasrintanzina@gmail.com', '$2y$10$hCT3msBSyRk0zN1V12uoDOqhy8KWe9j/zmYKPVstHZiS2Q7C0QekW', NULL, '', NULL, 1, '2025-03-01', '2026-02-28', 'Active', '2025-03-21 05:13:58', '2025-03-21 05:13:58', '1234567812345678', '12/30', '123'),
 (2, 'Claudia', 'Nasrin', 'aa@gmail.com', '$2y$10$65fU3URBWq0A9KtlHkJK4O1rd9ESSVplBOeOhupsfvGwVMuC9mExe', NULL, '', NULL, NULL, NULL, NULL, NULL, '2025-03-21 06:52:45', '2025-03-21 06:52:45', NULL, NULL, NULL),
 (3, 'Oleg', 'Fuentes', 'gihuqameki@mailinator.com', '$2y$10$iM92EncKIMQ46/LWdH/n0e1pZMtqbOS1RIC3Docv.Dqr/omoPzvOS', NULL, '', NULL, NULL, NULL, NULL, NULL, '2025-03-21 06:55:13', '2025-03-21 06:55:13', NULL, NULL, NULL),
 (4, 'Isabelle', 'Knight', 'app@help.com', '$2y$10$fORp9Xn/to4GVAhEvNZjH.aCmktGAGh//YJS.NHQge5Yz.5b//fD6', NULL, '', NULL, NULL, NULL, NULL, NULL, '2025-03-21 06:59:04', '2025-03-21 06:59:04', NULL, NULL, NULL),
