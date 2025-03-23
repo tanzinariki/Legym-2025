@@ -1,116 +1,118 @@
 <?php
-// Enable error reporting for debugging (remove in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 session_start();
 header('Content-Type: application/json');
 
-// Ensure user is logged in
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Please log in to perform this action.']);
+    echo json_encode(['success' => false, 'message' => 'Please log in.']);
     exit;
 }
 
 require_once 'db_connect.php';
-
-// Create database connection using credentials in db_connect.php
 $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 if ($db->connect_error) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error]);
+    echo json_encode(['success' => false, 'message' => 'DB connection failed: ' . $db->connect_error]);
     exit;
 }
 
-$action = isset($_POST['action']) ? $_POST['action'] : '';
+$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
-if ($action == 'filter') {
+if ($action == 'get_available_dates') {
+    // Return available dates for the selected online class.
+    $online_class = isset($_GET['online_class']) ? trim($_GET['online_class']) : '';
+    if (!$online_class) {
+        echo json_encode([]);
+        exit;
+    }
+    $query = "SELECT DISTINCT training_date FROM training WHERE class_id = ? AND training_date >= CURDATE() ORDER BY training_date ASC";
+    $stmt = $db->prepare($query);
+    $stmt->bind_param("i", $online_class);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $dates = [];
+    while ($row = $result->fetch_assoc()) {
+        $dateObj = new DateTime($row['training_date']);
+        $dates[] = $dateObj->format('M d, Y');
+    }
+    echo json_encode($dates);
+    exit;
+} elseif ($action == 'filter') {
+    // Filter online sessions scheduled between today and the selected available date.
     $online_class = isset($_POST['online_class']) ? trim($_POST['online_class']) : '';
     $until_date = isset($_POST['until_date']) ? trim($_POST['until_date']) : '';
-    
     if (empty($until_date)) {
         echo json_encode(['success' => false, 'message' => 'Please select a valid date.']);
         exit;
     }
-    
-    // Convert date from "MMM DD, YYYY" to "Y-m-d"
+    // Convert "MMM DD, YYYY" to "YYYY-MM-DD"
     $dateObj = DateTime::createFromFormat('M d, Y', $until_date);
     if (!$dateObj) {
-        echo json_encode(['success' => false, 'message' => 'Invalid date format: ' . $until_date]);
+        echo json_encode(['success' => false, 'message' => 'Invalid date format.']);
         exit;
     }
     $until_date_formatted = $dateObj->format('Y-m-d');
     
-    // Query: Retrieve training sessions for online classes
+    // Query online sessions scheduled between today and the selected date.
     $query = "SELECT t.id AS training_id, lc.class_name, t.training_date, t.training_time,
                      t.total_seats, t.online_training_link,
                      (SELECT COUNT(*) FROM user_training ut WHERE ut.training_id = t.id) AS booked_count,
-                     (SELECT COUNT(*) FROM user_training ut WHERE ut.training_id = t.id AND ut.user_id = ?) AS user_booked
+                     (SELECT COUNT(*) FROM user_training ut WHERE ut.training_id = t.id AND ut.user_id = ?) AS user_reserved
               FROM training t
               JOIN legym_class lc ON t.class_id = lc.id
               WHERE lc.class_type = 'Online'
-                AND t.training_date BETWEEN CURDATE() AND ?";
+                AND t.training_date BETWEEN CURDATE() AND ?
+              ";
     if (!empty($online_class)) {
         $query .= " AND lc.id = ?";
     }
     $query .= " ORDER BY t.training_date, t.training_time";
     
     $stmt = $db->prepare($query);
-    if (!$stmt) {
-        echo json_encode(['success' => false, 'message' => 'SQL Prepare Error: ' . $db->error]);
-        exit;
-    }
     if (!empty($online_class)) {
         $stmt->bind_param("isi", $_SESSION['user_id'], $until_date_formatted, $online_class);
     } else {
         $stmt->bind_param("si", $_SESSION['user_id'], $until_date_formatted);
     }
-    
-    if (!$stmt->execute()){
-        echo json_encode(['success' => false, 'message' => 'SQL Execute Error: ' . $stmt->error]);
+    if (!$stmt->execute()) {
+        echo json_encode(['success' => false, 'message' => 'SQL Exec Error: ' . $stmt->error]);
         exit;
     }
     $result = $stmt->get_result();
-    
     $html = "";
     if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $booked_count = $row['booked_count'];
             $total_seats = $row['total_seats'];
             $seats_available = $total_seats - $booked_count;
-            $user_booked = ($row['user_booked'] > 0);
+            $user_reserved = ($row['user_reserved'] > 0);
             
-            // Wrap tile with a container with id for easy targeting
-            $html .= '<div id="tile-' . $row['training_id'] . '" class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">'
-                   . '  <div class="tile-stats">';
+            $html .= '<div id="tile-' . $row['training_id'] . '" class="col-lg-3 col-md-3 col-sm-6 col-xs-12 tile-stats">';
+            $html .= '  <div class="count ' . ($seats_available > 0 ? 'green-font' : 'red-font') . '">' . $seats_available . '</div>';
+            $html .= '  <p class="small-card ' . ($seats_available > 0 ? 'green-font' : 'red-font') . '">Seats Available</p>';
+            $html .= '  <h3>' . htmlspecialchars($row['class_name']) . '</h3>';
+            $html .= '  <p>' . date("M d, Y", strtotime($row['training_date'])) . '</p>';
+            $html .= '  <p style="margin-top:0;">' . date("h:i A", strtotime($row['training_time'])) . '</p>';
             
-            // Seats available info
-            $html .= '    <div class="count ' . ($seats_available > 0 ? 'green-font' : 'red-font') . '">'
-                    .        $seats_available . '</div>'
-                    . '    <p class="small-card ' . ($seats_available > 0 ? 'green-font' : 'red-font') . '">Seats Available</p>';
-            
-            // Class info
-            $html .= '    <h3>' . htmlspecialchars($row['class_name']) . '</h3>'
-                    . '    <p>' . date("M d, Y", strtotime($row['training_date'])) . '</p>'
-                    . '    <p style="margin-top: 0;">' . date("h:i A", strtotime($row['training_time'])) . '</p>';
-            
-            // Button/Link area
             if ($seats_available <= 0) {
-                $html .= '    <button type="button" class="btn btn-danger" style="width:100%; margin-top:10px;" disabled>Booked</button>';
+                $html .= '  <button type="button" class="btn btn-danger" style="width:100%; margin-top:10px;" disabled>Booked</button>';
             } else {
-                if($user_booked){
-                    $html .= '    <button type="button" class="btn btn-warning cancel-btn" style="width:100%; margin-top:10px;" data-training-id="' . $row['training_id'] . '">Cancel</button>';
-                    if(!empty($row['online_training_link'])){
-                        $html .= '    <button type="button" class="btn btn-primary join-btn" style="width:100%; margin-top:10px;" onclick="window.open(\'' . htmlspecialchars($row['online_training_link']) . '\', \'_blank\');">Join Session</button>';
-                        $html .= '    <p class="link-text" style="margin-top:10px;">' . htmlspecialchars($row['online_training_link']) . '</p>';
-                        $html .= '    <button type="button" class="btn btn-info btn-xs copy-link-btn" style="margin-top:5px;" data-link="' . htmlspecialchars($row['online_training_link']) . '">Copy Link</button>';
+                if ($user_reserved) {
+                    // Show Join & Copy Link then Cancel.
+                    if (!empty($row['online_training_link'])) {
+                        $html .= '  <button type="button" class="btn btn-primary join-btn" style="width:100%; margin-top:10px;" '
+                               . 'onclick="window.open(\'' . htmlspecialchars($row['online_training_link']) . '\', \'_blank\');">'
+                               . 'Join Session</button>';
+                        $html .= '  <p class="link-text" style="margin-top:10px;">' . htmlspecialchars($row['online_training_link']) . '</p>';
+                        $html .= '  <button type="button" class="btn btn-info btn-xs copy-link-btn" style="margin-top:5px;" '
+                               . 'data-link="' . htmlspecialchars($row['online_training_link']) . '">Copy Link</button>';
                     }
+                    $html .= '  <button type="button" class="btn btn-warning cancel-btn" style="width:100%; margin-top:10px;" '
+                           . 'data-training-id="' . $row['training_id'] . '">Cancel</button>';
                 } else {
-                    $html .= '    <button type="button" class="btn btn-success reserve-btn" style="width:100%; margin-top:10px;" data-training-id="' . $row['training_id'] . '">Reserve</button>';
+                    $html .= '  <button type="button" class="btn btn-success reserve-btn" style="width:100%; margin-top:10px;" '
+                           . 'data-training-id="' . $row['training_id'] . '">Reserve</button>';
                 }
             }
-            
-            $html .= '  </div>'
-                    . '</div>';
+            $html .= '</div>';
         }
     } else {
         $html = "<p>No training sessions found for the selected criteria.</p>";
@@ -118,9 +120,8 @@ if ($action == 'filter') {
     $stmt->close();
     echo json_encode(['success' => true, 'html' => $html]);
     exit;
-}
-
-if ($action == 'reserve') {
+} elseif ($action == 'reserve') {
+    // Reserve a session.
     if (empty($_POST['training_id'])) {
         echo json_encode(['success' => false, 'message' => 'No training_id provided.']);
         exit;
@@ -128,7 +129,7 @@ if ($action == 'reserve') {
     $training_id = intval($_POST['training_id']);
     $user_id = intval($_SESSION['user_id']);
     
-    // Check if booking already exists.
+    // Check if user already reserved this session.
     $stmt = $db->prepare("SELECT id FROM user_training WHERE training_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $training_id, $user_id);
     $stmt->execute();
@@ -139,7 +140,7 @@ if ($action == 'reserve') {
     }
     $stmt->close();
     
-    // Retrieve session details.
+    // Check seats available.
     $stmt = $db->prepare("SELECT total_seats, online_training_link, (SELECT COUNT(*) FROM user_training WHERE training_id = ?) AS booked_count FROM training WHERE id = ?");
     $stmt->bind_param("ii", $training_id, $training_id);
     $stmt->execute();
@@ -157,10 +158,10 @@ if ($action == 'reserve') {
         exit;
     }
     
-    // Insert booking record.
+    // Insert reservation.
     $stmt = $db->prepare("INSERT INTO user_training (training_id, user_id, booking_time, status) VALUES (?, ?, NOW(), 'Booked')");
     $stmt->bind_param("ii", $training_id, $user_id);
-    if ($stmt->execute()){
+    if ($stmt->execute()) {
         echo json_encode([
             'success' => true,
             'message' => 'Class booked successfully!',
@@ -171,9 +172,8 @@ if ($action == 'reserve') {
     }
     $stmt->close();
     exit;
-}
-
-if ($action == 'cancel') {
+} elseif ($action == 'cancel') {
+    // Cancel a reservation.
     if (empty($_POST['training_id'])) {
         echo json_encode(['success' => false, 'message' => 'No training_id provided.']);
         exit;
@@ -192,7 +192,7 @@ if ($action == 'cancel') {
     }
     $stmt->close();
     
-    // Delete booking record.
+    // Delete booking.
     $stmt = $db->prepare("DELETE FROM user_training WHERE training_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $training_id, $user_id);
     if ($stmt->execute()){
@@ -202,8 +202,9 @@ if ($action == 'cancel') {
     }
     $stmt->close();
     exit;
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid action.']);
+    exit;
 }
-
-echo json_encode(['success' => false, 'message' => 'Invalid action.']);
 $db->close();
-?>
+exit;
