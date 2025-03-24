@@ -36,16 +36,14 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Book Personal Training Session</title>
-    <!-- You can use local files or CDN links -->
+    <!-- Include CSS files (local or CDN) -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/select2.min.css" rel="stylesheet">
     <style>
         .required { color: red; }
         .label-training-session { margin-right: 5px; }
-        /* Hide the entire specialties wrapper by default */
-        #specialties-wrapper { display: none; }
-        /* Hide time slot wrapper by default */
-        #timeslot-wrapper { display: none; }
+        /* Hide specialties and timeslot wrappers by default */
+        #specialties-wrapper, #timeslot-wrapper { display: none; }
     </style>
 </head>
 <body>
@@ -69,7 +67,7 @@ $conn->close();
       <div class="page-title">
         <div class="title_left">
           <h3>Book Personal Training Session</h3>
-          <h5>Schedule your one-on-one training session with our expert trainers.</h5>
+          <h5>Schedule your one-on-one session with our expert trainers.</h5>
         </div>
       </div>
       <div class="clearfix"></div>
@@ -79,7 +77,7 @@ $conn->close();
         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
           <div class="x_panel">
             <div class="x_title">
-              <h2>Meet Your Preferred Enthusiastic Fitness Trainer</h2>
+              <h2>Meet Your Preferred Trainer</h2>
               <ul class="nav navbar-right panel_toolbox">
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
               </ul>
@@ -104,9 +102,9 @@ $conn->close();
                   </div>
                 </div>
 
-                <!-- Trainer Specialities Wrapper (hidden by default) -->
+                <!-- Trainer Specialties Wrapper (hidden by default) -->
                 <div class="form-group" id="specialties-wrapper">
-                  <label class="control-label col-lg-12">Trainer Specialities</label>
+                  <label class="control-label col-lg-12">Trainer Specialties</label>
                   <div class="col-lg-12" id="trainer-specialities" style="margin-top: 10px;">
                     <!-- Specialties will be populated here once a trainer is picked -->
                   </div>
@@ -127,7 +125,7 @@ $conn->close();
                 <!-- Available Time Slots (hidden by default) -->
                 <div class="form-group" id="timeslot-wrapper">
                   <label class="control-label col-lg-12" for="available-time-slot">
-                    Available Time slots <span class="required">*</span>
+                    Available Time Slots <span class="required">*</span>
                   </label>
                   <div class="col-lg-12">
                     <select class="form-control select2-single" id="available-time-slot" name="timeslot" required>
@@ -223,30 +221,26 @@ $conn->close();
 $(document).ready(function() {
     $('.select2-single').select2();
 
-    // 1) When trainer changes, load specialties and available dates
+    // When trainer selection changes, update specialties and available dates.
     $('#trainer-name').on('change', function() {
         updateTrainerInfo();
     });
 
-    // 2) When date changes, show timeslot field and load timeslots
+    // When available date selection changes, load available time slots.
     $('#available-dates').on('change', function() {
         var selectedDate = $(this).val();
         if (!selectedDate) {
-            // Hide timeslot field if no date is selected
             $('#timeslot-wrapper').hide();
             $('#available-time-slot').html('<option value="">Select Date First</option>');
         } else {
-            // Show timeslot field and load timeslots
             $('#timeslot-wrapper').show();
             updateAvailableTimeSlots();
         }
     });
 
-    // Function to update trainer specialties and available dates
+    // Function to update trainer specialties and available dates.
     function updateTrainerInfo() {
         var trainerId = $('#trainer-name').val();
-
-        // If no trainer is selected, hide specialties and reset date/time fields
         if (!trainerId) {
             $('#specialties-wrapper').hide().html('');
             $('#available-dates').html('<option value="">Select Trainer First</option>');
@@ -255,7 +249,7 @@ $(document).ready(function() {
             return;
         }
 
-        // 1) Update specialties
+        // 1) Fetch trainer specialties.
         $.ajax({
             url: 'personal_training_process.php',
             type: 'GET',
@@ -271,13 +265,11 @@ $(document).ready(function() {
                     specialtiesHtml = 'No specialties available.';
                 }
                 $('#specialties-wrapper').html(
-                  '<label class="control-label col-lg-12">Trainer Specialities</label>' +
-                  '<div class="col-lg-12" id="trainer-specialities" style="margin-top: 10px;">' + 
-                    specialtiesHtml + 
-                  '</div>'
+                  '<label class="control-label col-lg-12">Trainer Specialties</label>' +
+                  '<div class="col-lg-12" id="trainer-specialities" style="margin-top: 10px;">' + specialtiesHtml + '</div>'
                 ).show();
 
-                // 2) Update available dates for the selected trainer
+                // 2) Fetch available dates for the trainer.
                 $.ajax({
                     url: 'personal_training_process.php',
                     type: 'GET',
@@ -293,7 +285,6 @@ $(document).ready(function() {
                             options += '<option value="">No available dates</option>';
                         }
                         $('#available-dates').html(options);
-                        // Reset time slot field
                         $('#timeslot-wrapper').hide();
                         $('#available-time-slot').html('<option value="">Select Date First</option>');
                     },
@@ -308,7 +299,8 @@ $(document).ready(function() {
         });
     }
 
-    // Function to update available time slots based on selected trainer and date
+    // Function to update available time slots.
+    // This call now queries the back end to return only those timeslots that are not booked.
     function updateAvailableTimeSlots() {
         var trainerId = $('#trainer-name').val();
         var selectedDate = $('#available-dates').val();
@@ -334,20 +326,20 @@ $(document).ready(function() {
                 $('#available-time-slot').html(timeslotHtml);
             },
             error: function() {
-                $('#available-time-slot').html('<option value="">Error loading timeslots</option>');
+                $('#available-time-slot').html('<option value="">Error loading time slots</option>');
             }
         });
     }
 
-    // Load upcoming sessions on page load
+    // Load upcoming sessions on page load.
     $("#upcomingSessionsContainer").load("personal_training_process.php?action=get_upcoming_sessions");
 
-    // Load past sessions when the Past tab is activated
+    // Load past sessions when the Past tab is activated.
     $('a[href="#past"]').on('shown.bs.tab', function () {
         $("#pastSessionsContainer").load("personal_training_process.php?action=get_past_sessions");
     });
 
-    // Submit the booking form via AJAX
+    // Submit the booking form via AJAX.
     $('#in-person-fitness-form').on('submit', function(e) {
         e.preventDefault();
         $.ajax({
@@ -359,7 +351,6 @@ $(document).ready(function() {
                 $("#modalMessage").text(response.message);
                 $("#responseModal").modal("show");
                 if(response.status === "success") {
-                    // Refresh upcoming sessions
                     $("#upcomingSessionsContainer").load("personal_training_process.php?action=get_upcoming_sessions");
                 }
             },
@@ -370,7 +361,7 @@ $(document).ready(function() {
         });
     });
 
-    // Cancel booking via custom modal
+    // Cancel booking via confirmation modal.
     var currentCancelBookingId = null;
     var currentCancelButton = null;
     $(document).on('click', '.cancel-booking', function() {
@@ -396,7 +387,7 @@ $(document).ready(function() {
             },
             error: function() {
                 $("#cancelConfirmModal").modal("hide");
-                $("#modalMessage").text("An error occurred while processing your cancellation. Please try again later or contact support if the problem persists.");
+                $("#modalMessage").text("An error occurred while processing your cancellation.");
                 $("#responseModal").modal("show");
             }
         });

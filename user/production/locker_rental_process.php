@@ -1,5 +1,5 @@
 <?php
-// Enable error reporting (remove in production)
+// Enable error reporting for debugging (remove in production)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -19,9 +19,10 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Handle GET actions.
+// Handle GET requests.
 if (isset($_GET['action'])) {
-    // Remove booking.
+
+    // 1. Remove booking.
     if ($_GET['action'] === 'remove_booking') {
         if (empty($_GET['booking_id'])) {
             echo json_encode(['status' => 'error', 'message' => 'Missing booking ID.']);
@@ -29,13 +30,14 @@ if (isset($_GET['action'])) {
             exit;
         }
         $booking_id = (int) $_GET['booking_id'];
+        // Verify booking belongs to user and is booked.
         $verifySql = "SELECT id FROM user_locker WHERE id = ? AND user_id = ? AND status = 'Booked'";
         $stmtVerify = $conn->prepare($verifySql);
         $stmtVerify->bind_param('ii', $booking_id, $_SESSION['user_id']);
         $stmtVerify->execute();
         $stmtVerify->store_result();
         if ($stmtVerify->num_rows == 0) {
-            echo json_encode(['status' => 'error', 'message' => 'Booking not found or not authorized.']);
+            echo json_encode(['status' => 'error', 'message' => 'Booking not found or unauthorized.']);
             $stmtVerify->close();
             $conn->close();
             exit;
@@ -55,7 +57,7 @@ if (isset($_GET['action'])) {
         exit;
     }
     
-    // Get available lockers.
+    // 2. Get available lockers.
     if ($_GET['action'] === 'get_available_lockers') {
         if (empty($_GET['date']) || empty($_GET['time_slot'])) {
             echo json_encode(['status' => 'error', 'message' => 'Missing date or time slot.']);
@@ -94,12 +96,11 @@ if (isset($_GET['action'])) {
     
         $stmt->close();
         $conn->close();
-    
         echo json_encode(['status' => 'success', 'data' => $availableLockers]);
         exit;
     }
     
-    // Get all bookings for the logged-in user.
+    // 3. Get all bookings for the logged-in user.
     if ($_GET['action'] === 'get_bookings') {
         $user_id = $_SESSION['user_id'];
         $sql = "SELECT ul.id as booking_id, ul.rent_date, ul.rent_duration, l.locker_name 
@@ -134,6 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $locker_id = (int) $_POST['locker-no'];
     $user_id   = $_SESSION['user_id'];
     
+    // Check if the locker is still available.
     $checkSql = "
         SELECT id FROM user_locker
         WHERE locker_id = ?
@@ -158,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $stmtCheck->close();
     
+    // Insert the new booking.
     $insertSql = "
         INSERT INTO user_locker (locker_id, rent_date, rent_duration, user_id, status)
         VALUES (?, ?, ?, ?, 'Booked')
@@ -171,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmtInsert->bind_param('issi', $locker_id, $dateFormatted, $timeSlot, $user_id);
     if ($stmtInsert->execute()) {
         $booking_id = $stmtInsert->insert_id;
+        // Get the locker name.
         $sqlSelect = "SELECT id, locker_name FROM locker WHERE id = ?";
         $stmtSelect = $conn->prepare($sqlSelect);
         $stmtSelect->bind_param("i", $locker_id);

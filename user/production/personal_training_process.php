@@ -9,7 +9,7 @@ header("Content-Type: application/json");
 
 $response = array();
 
-// Process POST requests: Booking a session.
+// Process POST requests: Booking a training session.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
     if ($conn->connect_error) {
@@ -31,10 +31,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Convert date (e.g. "Saturday, March 23, 2025") to "Y-m-d"
+    // Convert the training date from formatted string to "Y-m-d".
     $formatted_date = date("Y-m-d", strtotime($training_date));
 
-    // Look for matching trainer availability
+    // Look for matching trainer availability.
     $stmt = $conn->prepare("SELECT id FROM trainer_availability 
                             WHERE trainer_id = ? AND date = ? AND timeslot = ?");
     $stmt->bind_param("iss", $trainer_id, $formatted_date, $timeslot);
@@ -51,23 +51,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $stmt->close();
 
-    // Check if the user already booked this slot (ignoring cancelled bookings)
-    $user_id = $_SESSION['user_id'];
+    // Check if the trainer is already booked for that slot (by any user)
     $stmt = $conn->prepare("SELECT id FROM user_personal_training 
-                            WHERE user_id = ? AND trainer_availability_id = ? 
+                            WHERE trainer_availability_id = ? 
                               AND cancel_at IS NULL");
-    $stmt->bind_param("ii", $user_id, $trainer_availability_id);
+    $stmt->bind_param("i", $trainer_availability_id);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $response["status"] = "error";
-        $response["message"] = "You have already booked this training session.";
+        $response["message"] = "This trainer is already booked for the selected time slot.";
         echo json_encode($response);
         exit();
     }
     $stmt->close();
 
-    // Insert the booking record
+    // Check if the user already has a booking in the same slot (with any trainer)
+    $user_id = $_SESSION['user_id'];
+    $stmt = $conn->prepare("SELECT up.id 
+                            FROM user_personal_training up
+                            JOIN trainer_availability ta ON up.trainer_availability_id = ta.id
+                            WHERE up.user_id = ? AND ta.date = ? AND ta.timeslot = ? 
+                              AND up.cancel_at IS NULL");
+    $stmt->bind_param("iss", $user_id, $formatted_date, $timeslot);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $response["status"] = "error";
+        $response["message"] = "You have already booked a training session for this time slot.";
+        echo json_encode($response);
+        exit();
+    }
+    $stmt->close();
+
+    // Insert the new booking record.
     $stmt = $conn->prepare("INSERT INTO user_personal_training 
                             (trainer_availability_id, user_id, booking_at) 
                             VALUES (?, ?, NOW())");
@@ -94,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($action == 'cancel_booking' && isset($_GET['booking_id'])) {
-            // Cancellation logic
+            // Cancellation logic.
             $booking_id = intval($_GET['booking_id']);
             $user_id = $_SESSION['user_id'];
             $sql = "SELECT ta.date, ta.timeslot 
@@ -114,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($update_stmt->execute()) {
                     echo json_encode(['status' => 'success', 'message' => 'Booking cancelled successfully.']);
                 } else {
-                    echo json_encode(['status' => 'error', 'message' => 'Failed to cancel booking: ' . $update_stmt->error]);
+                    echo json_encode(['status' => 'error', 'message' => 'Failed to cancel booking.']);
                 }
                 $update_stmt->close();
             } else {
@@ -123,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->close();
 
         } elseif ($action == 'get_upcoming_sessions') {
-            // Upcoming sessions
+            // Return upcoming sessions.
             $user_id = $_SESSION['user_id'];
             $sql = "SELECT up.id AS booking_id, ta.date, ta.timeslot, t.trainer_name
                     FROM user_personal_training up
@@ -159,7 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo $output;
 
         } elseif ($action == 'get_past_sessions') {
-            // Past sessions
+            // Return past sessions.
             $user_id = $_SESSION['user_id'];
             $sql = "SELECT up.id AS booking_id, ta.date, ta.timeslot, t.trainer_name, up.cancel_at
                     FROM user_personal_training up
@@ -193,9 +210,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo $output;
 
         } elseif ($action == 'get_trainer_info' && isset($_GET['id'])) {
-            // Get trainer info: specialties and timeslots (if date is provided)
+            // Return trainer info: specialties and, if a date is provided,
+            // available time slots that are not already booked.
             $trainerId = $_GET['id'];
-            // 1) Get specialties
+            // 1) Get specialties.
             $stmt = $conn->prepare("SELECT trainer_speciality FROM trainer WHERE id = ?");
             $stmt->bind_param("i", $trainerId);
             $stmt->execute();
@@ -208,15 +226,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $stmt->close();
 
-            // 2) If a date is provided, return timeslots for that date
+            // 2) If a date is provided, return available timeslots.
             $timeslots = [];
             if (isset($_GET['date']) && !empty($_GET['date'])) {
                 $inputDate = $_GET['date'];
                 $formattedDate = date("Y-m-d", strtotime($inputDate));
+                // Return timeslots from trainer_availability that are NOT booked.
                 $stmt2 = $conn->prepare("SELECT timeslot 
                                          FROM trainer_availability 
                                          WHERE trainer_id = ? 
-                                           AND date = ?");
+                                           AND date = ?
+                                           AND id NOT IN (
+                                               SELECT trainer_availability_id 
+                                               FROM user_personal_training 
+                                               WHERE cancel_at IS NULL
+                                           )");
                 $stmt2->bind_param("is", $trainerId, $formattedDate);
                 $stmt2->execute();
                 $result2 = $stmt2->get_result();
@@ -231,7 +255,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
 
         } elseif ($action == 'get_available_dates' && isset($_GET['id'])) {
-            // Return distinct future dates in "Saturday, March 23, 2025" format
+            // Return distinct available future dates (formatted as "Saturday, March 23, 2025").
             $trainerId = $_GET['id'];
             $stmt = $conn->prepare("SELECT DISTINCT date 
                                     FROM trainer_availability 
@@ -247,7 +271,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $stmt->close();
             echo json_encode($dates);
-
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
         }

@@ -87,6 +87,7 @@ require_once 'db_connect.php';
                   <label class="control-label col-lg-12" for="rental_date">Date <span class="required">*</span></label>
                   <div class="col-lg-12">
                     <div class="input-group date" id="datepicker-readonly">
+                      <!-- Using YYYY-MM-DD format -->
                       <input type="text" class="form-control" name="date" id="rental_date" readonly="readonly" required />
                       <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
@@ -94,18 +95,12 @@ require_once 'db_connect.php';
                     </div>
                   </div>
                 </div>
-                <!-- Time Slot Selection -->
+                <!-- Time Slot Selection (populated dynamically) -->
                 <div class="form-group">
                   <label class="control-label col-lg-12" for="time-slot">Time Slot <span class="required">*</span></label>
                   <div class="col-lg-12">
                     <select class="form-control select2-single" id="time-slot" name="time-slot" required>
                       <option value="">Select Your Time Slot</option>
-                      <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM</option>
-                      <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM</option>
-                      <option value="01:00 PM - 03:00 PM">01:00 PM - 03:00 PM</option>
-                      <option value="03:00 PM - 05:00 PM">03:00 PM - 05:00 PM</option>
-                      <option value="05:00 PM - 07:00 PM">05:00 PM - 07:00 PM</option>
-                      <option value="07:00 PM - 09:00 PM">07:00 PM - 09:00 PM</option>
                     </select>
                   </div>
                 </div>
@@ -131,7 +126,7 @@ require_once 'db_connect.php';
         </div>
       </div>
 
-      <!-- Bookings Tabs -->
+      <!-- Bookings Grid (Upcoming and Past Bookings) -->
       <div id="bookingsGrid">
         <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="tab" href="#upcoming">Upcoming Bookings</a></li>
@@ -155,6 +150,24 @@ require_once 'db_connect.php';
     <?php require_once 'inc/copyright.php'; ?>
   </div>
 </div>
+
+<!-- Bootstrap Modal for Success Messages -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="successModalLabel">Success</h4>
+      </div>
+      <div class="modal-body" id="modalMessage">
+        <!-- Success message will be set dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php require_once 'inc/footer.php'; ?>
 
 <!-- Include JS libraries -->
@@ -165,25 +178,93 @@ require_once 'db_connect.php';
 <script>
 $(document).ready(function() {
   var availableLockers = [];
-  // Array to store all bookings for the user.
   var allBookings = [];
-  
+
+  // Define time slots (each with a label, start, and end in 24-hour format)
+  var timeSlots = [
+    { label: "09:00 AM - 11:00 AM", start: 9,  end: 11 },
+    { label: "11:00 AM - 01:00 PM", start: 11, end: 13 },
+    { label: "01:00 PM - 03:00 PM", start: 13, end: 15 },
+    { label: "03:00 PM - 05:00 PM", start: 15, end: 17 },
+    { label: "05:00 PM - 07:00 PM", start: 17, end: 19 },
+    { label: "07:00 PM - 09:00 PM", start: 19, end: 21 }
+  ];
+
   // Initialize plugins.
   $('.select2-single').select2();
   $('#datepicker-readonly').datetimepicker({
-      format: 'MMM DD, YYYY',
+      format: 'YYYY-MM-DD', // standard format for JS Date parsing
       ignoreReadonly: true,
       allowInputToggle: true,
-      minDate: new Date()  // Disable past dates.
+      minDate: new Date()  // disable past dates
   });
-  
-  // When date or time slot changes, reload available lockers and bookings.
-  $('#rental_date, #time-slot').on('change', function() {
+
+  // Listen to the dp.change event on the datepicker container.
+  $('#datepicker-readonly').on('dp.change', function(e) {
+    loadTimeSlots();
+    // Reset time slot and locker selections.
+    $('#time-slot').val('');
+    $('#locker-no').empty().append('<option value="">Select Date &amp; Time First</option>');
+  });
+
+  // When a time slot is selected, load available lockers and bookings.
+  $('#time-slot').on('change', function() {
     loadAvailableLockers();
     loadBookings();
   });
+
+  // Dynamically populate time slots.
+// Helper function to create a local date string in "YYYY-MM-DD" format.
+// Helper function to get a local date string "YYYY-MM-DD".
+function getLocalDateString(date) {
+  var year = date.getFullYear();
+  var month = ("0" + (date.getMonth() + 1)).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
+  return year + "-" + month + "-" + day;
+}
+
+function loadTimeSlots() {
+  var selectedDateStr = $('#rental_date').val().trim();
+  console.log("Selected Date:", selectedDateStr);
   
-  // Load available lockers.
+  var timeSlotSelect = $('#time-slot');
+  timeSlotSelect.empty();
+  timeSlotSelect.append('<option value="">Select Your Time Slot</option>');
+  
+  if (!selectedDateStr) return;
+  
+  // Get today's date in local time.
+  var now = new Date();
+  var todayStr = getLocalDateString(now);
+  console.log("Today (local):", todayStr);
+  
+  var filteredSlots = timeSlots;
+  
+  // If the selected date is today, filter out slots that have already started.
+  if (selectedDateStr === todayStr) {
+    var nextHour = now.getHours() + 1;
+    console.log("Current Hour:", now.getHours(), "Next Hour:", nextHour);
+    filteredSlots = timeSlots.filter(function(slot) {
+      return slot.start >= nextHour;
+    });
+    console.log("Filtered Slots:", filteredSlots);
+  }
+  
+  // Populate the dropdown.
+  if (filteredSlots.length === 0) {
+    timeSlotSelect.append('<option value="">No time slots available</option>');
+  } else {
+    $.each(filteredSlots, function(index, slot) {
+      timeSlotSelect.append('<option value="' + slot.label + '">' + slot.label + '</option>');
+    });
+  }
+}
+
+
+
+
+
+  // Load available lockers (AJAX GET).
   function loadAvailableLockers() {
     var selectedDate = $('#rental_date').val();
     var selectedTimeSlot = $('#time-slot').val();
@@ -217,13 +298,13 @@ $(document).ready(function() {
           }
         },
         error: function() {
-          // Silent error.
+          // Handle error silently.
         }
       });
     }
   }
-  
-  // Load all bookings for the logged-in user.
+
+  // Load bookings for the logged-in user.
   function loadBookings() {
     $.ajax({
       url: 'locker_rental_process.php',
@@ -232,17 +313,17 @@ $(document).ready(function() {
       data: { action: 'get_bookings' },
       success: function(response) {
         if (response.status === 'success') {
-          allBookings = response.data; // Each booking includes booking_id, rent_date, rent_duration, locker_name.
+          allBookings = response.data;
           renderBookings();
         }
       },
       error: function() {
-        // Silent error.
+        // Handle error silently.
       }
     });
   }
-  
-  // Render bookings into Upcoming and Past tabs.
+
+  // Render bookings into "Upcoming" and "Past" tabs.
   function renderBookings() {
     var containerUpcoming = $('#upcomingBookingsContainer');
     var containerPast = $('#pastBookingsContainer');
@@ -252,17 +333,13 @@ $(document).ready(function() {
     var today = new Date();
     today.setHours(0,0,0,0);
     
-    // Upcoming bookings: those with rent_date >= today.
     var upcomingBookings = allBookings.filter(function(booking) {
       var bDate = new Date(booking.rent_date + 'T00:00:00');
-
       return bDate >= today;
     });
     
-    // Past bookings: those with rent_date < today.
     var pastBookings = allBookings.filter(function(booking) {
       var bDate = new Date(booking.rent_date + 'T00:00:00');
-
       return bDate < today;
     });
     
@@ -282,7 +359,7 @@ $(document).ready(function() {
         containerUpcoming.append(card);
       });
     } else {
-      containerUpcoming.append('<div class="col-md-12"><p>No upcoming bookings for this date and time.</p></div>');
+      containerUpcoming.append('<div class="col-md-12"><p>No upcoming bookings.</p></div>');
     }
     
     if (pastBookings.length > 0) {
@@ -303,7 +380,7 @@ $(document).ready(function() {
       containerPast.append('<div class="col-md-12"><p>No past bookings.</p></div>');
     }
   }
-  
+
   // Submit booking form.
   $('#locker-rental-form').on('submit', function(e) {
     e.preventDefault();
@@ -314,7 +391,7 @@ $(document).ready(function() {
       data: $(this).serialize(),
       success: function(response) {
         if (response.status === 'success') {
-          // Add new booking to allBookings.
+          // Update the bookings grid.
           allBookings.push({
             booking_id: response.data.booking_id,
             locker_name: response.data.locker_name,
@@ -323,14 +400,17 @@ $(document).ready(function() {
           });
           renderBookings();
           loadAvailableLockers();
+          // Show success modal for booking.
+          $('#modalMessage').html('Booking Successful!');
+          $('#successModal').modal('show');
         }
       },
       error: function() {
-        // Silent error.
+        // Handle error silently.
       }
     });
   });
-  
+
   // Cancel booking.
   $('#upcomingBookingsContainer').on('click', '.cancel-booking', function() {
     var bookingId = $(this).data('booking-id');
@@ -346,17 +426,20 @@ $(document).ready(function() {
             allBookings = allBookings.filter(function(b) { return b.booking_id != booking.booking_id; });
             renderBookings();
             loadAvailableLockers();
+            // Show success modal for cancellation.
+            $('#modalMessage').html('Cancellation Successful!');
+            $('#successModal').modal('show');
           }
         },
         error: function() {
-          // Silent error.
+          // Handle error silently.
         }
       });
     }
   });
-  
-  // Initial load.
-  loadAvailableLockers();
+
+  // Initial load: if a date is pre-filled, load time slots and bookings.
+  loadTimeSlots();
   loadBookings();
 });
 </script>
