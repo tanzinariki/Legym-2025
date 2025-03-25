@@ -27,6 +27,19 @@ if (isset($_POST['agree'])) {
         exit();
     }
 
+    $sql = 'SELECT * FROM user WHERE id = ?';
+    $qr = $conn->prepare($sql);
+    $qr->bind_param("s", $_SESSION['user_id']);
+    $qr->execute();
+    $res_user = $qr->get_result();
+    if ($res_user->num_rows == 1) {
+        $res_user = $res_user->fetch_assoc();
+        if ($membership_plan_id == $res_user['membership_plan_id']) {
+            echo json_encode(["status" => "sorry", "message" => "You are already enjoying the selected plan!"]);
+            exit();
+        }
+    }
+
     date_default_timezone_set('America/New_York');
     $membership_start_date = date('Y-m-d');
     $membership_end_date = date('Y-m-d', strtotime('+1 year -1 day'));
@@ -40,12 +53,12 @@ if (isset($_POST['agree'])) {
         exit();
     }
 
-    if (strlen($card_number) < 16) {
+    if (strlen($card_expire_date) < 5) {
         echo json_encode(["status" => "error", "message" => "Card Expire Date format is not valid!"]);
         exit();
     }
 
-    if (strlen($card_number) < 16) {
+    if (strlen($card_cvv) < 4) {
         echo json_encode(["status" => "error", "message" => "CVV should contain 3 or 4 digits!"]);
         exit();
     }

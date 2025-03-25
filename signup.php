@@ -9,7 +9,7 @@ require_once 'inc/preload.php';
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-xs-12 text-center signupHead">
-                            <h2><a href="index.html"><span>Le Gym</span></a></h2>
+                            <h2><a href="index.php"><span>Le Gym</span></a></h2>
                             <p class="subTitle">Join our fitness community and start your wellness journey.</p>
                         </div>
                         <div class="signupForm">

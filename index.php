@@ -6,7 +6,6 @@ require_once 'inc/header_section.php';
 require_once 'main/banner_section.php';
 require_once 'main/service_section.php';
 require_once 'main/pricing_section.php';
-require_once 'main/contact_us_section.php';
 require_once 'inc/footer_section.php';
 require_once 'inc/copyright_section.php';
 require_once 'inc/footer.php';
