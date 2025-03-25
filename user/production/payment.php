@@ -214,7 +214,7 @@ require_once 'inc/header.php';
                             icon: "success",
                             confirmButtonText: "OK"
                         }).then(() => {
-                            window.location.href = "legym/user/production/dashboard.php";
+                            window.location.href = "dashboard.php";
                         });
                     } else {
                         Swal.fire({

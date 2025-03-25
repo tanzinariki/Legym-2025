@@ -79,6 +79,7 @@ if (isset($_POST['agree'])) {
     );
 
     if ($qr->execute()) {
+        $_SESSION['status'] = "Active";
         echo json_encode(["status" => "success", "message" => "Payment processed successfully!"]);
     } else {
         echo json_encode(["status" => "error", "message" => "Payment failed!"]);
