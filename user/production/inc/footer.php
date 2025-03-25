@@ -12,6 +12,10 @@
     <script src="../vendors/gauge.js/dist/gauge.min.js"></script>
     <!-- bootstrap-progressbar -->
     <script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- Ion.RangeSlider -->
+    <script src="../vendors/ion.rangeSlider/js/ion.rangeSlider.min.js"></script>
+    <!-- jQuery Knob -->
+    <script src="../vendors/jquery-knob/dist/jquery.knob.min.js"></script>
     <!-- iCheck -->
     <script src="../vendors/iCheck/icheck.min.js"></script>
     <!-- Skycons -->

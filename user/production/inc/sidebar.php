@@ -7,6 +7,9 @@
                     <i class="fa fa-home"></i>Dashboard
                 </a>
             </li>
+            <?php
+            if ($_SESSION["status"] == 'Active') {
+            ?>
             <li>   
                 <a href="online_booking.php">
                     <i class="fa fa-laptop"></i>Online Class Booking
@@ -37,6 +40,9 @@
                     <i class="fa fa-info-circle"></i>Membership Detail
                 </a>
             </li>
+            <?php
+            }
+            ?>
             <li>   
                 <a href="logout.php">
                     <i class="fa fa-power-off"></i>Logout

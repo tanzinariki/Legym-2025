@@ -144,7 +144,8 @@ html , body{
     padding: 0 0 4px 0
 }
 .left_col {
-    background: #2A3F54
+    /* background: #2A3F54; */
+    background: #320089;
 }
 .nav-sm .container.body .col-md-3.left_col {
     min-height: 100%;
@@ -360,7 +361,8 @@ body .container.body .right_col {
 .nav_title {
     width: 230px;
     float: left;
-    background: #2A3F54;
+    /* background: #2A3F54; */
+    background: #320089;
     border-radius: 0;
     height: 57px
 }
@@ -491,8 +493,10 @@ body .container.body .right_col {
     background: #D9DEE4
 }
 body {
-    color: #73879C;
-    background: #2A3F54;
+    /* color: #73879C; */
+    color: #7C3AED;
+    /* background: #2A3F54; */
+    background: #320089;
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     font-size: 13px;
     font-weight: 400;
@@ -656,7 +660,7 @@ h3,
     margin-bottom: 10px
 }
 a {
-    color: #5A738E;
+    color: #7C3AED;
     text-decoration: none
 }
 a,
@@ -807,7 +811,8 @@ a:focus {
 }
 .nav.side-menu>li.active>a {
     text-shadow: rgba(0, 0, 0, 0.25) 0 -1px 0;
-    background: linear-gradient(#334556, #2C4257), #2A3F54;
+    /* background: linear-gradient(#334556, #2C4257), #2A3F54; */
+    background: linear-gradient(#334556, #2C4257), #320089;
     box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0
 }
 .navbar-brand,
@@ -1681,7 +1686,8 @@ span.right {
     padding: 5px 0 0 0;
     position: fixed;
     width: 230px;
-    background: #2A3F54;
+    /* background: #2A3F54; */
+    background: #320089;
 	z-index:999;
 }
 .sidebar-footer a {
@@ -1800,8 +1806,8 @@ ul.top_profiles li:nth-child(odd) {
     font-size: 30px
 }
 .media .date {
-    background: #2d6eaf;
-    width: 52px;
+    background: #7C3AED47;
+    width: 70px;
     margin-right: 10px;
     border-radius: 10px;
     padding: 5px
@@ -1809,11 +1815,11 @@ ul.top_profiles li:nth-child(odd) {
 .media .date .month {
     margin: 0;
     text-align: center;
-    color: #fff
+    color: #7C3AED
 }
 .media .date .day {
     text-align: center;
-    color: #fff;
+    color: #7C3AED;
     font-size: 27px;
     margin: 0;
     line-height: 27px;
@@ -1824,7 +1830,7 @@ ul.top_profiles li:nth-child(odd) {
 }
 .event .media-body p {
     margin-bottom: 0;
-    font-size: 16px;
+    font-size: 18px;
     letter-spacing: 0.5px;
 }
 h4.graph_title {
@@ -1930,7 +1936,9 @@ h4.graph_title {
     padding: 0
 }
 .tile-stats h3 {
-    color: #555555
+    color: #7C3AED;
+    font-weight: bold;
+    font-size: 20px;
 }
 .tile-stats p {
     margin-top: 5px;
@@ -2129,7 +2137,7 @@ button,
 }
 .compose .compose-header {
     padding: 5px;
-    background: #169F85;
+    background: #5318ba;
     color: #fff;
     border-top-left-radius: 5px
 }
@@ -2357,15 +2365,15 @@ a.btn-danger {
     color: #fff
 }
 .btn-success {
-    background: #26B99A;
-    border: 1px solid #169F85
+    background: #7C3AED;
+    border: 1px solid #4d13b1
 }
 .btn-success:hover,
 .btn-success:focus,
 .btn-success:active,
 .btn-success.active,
 .open .dropdown-toggle.btn-success {
-    background: #169F85
+    background: #5318ba
 }
 .btn-dark {
     color: #E9EDEF;
@@ -3354,7 +3362,7 @@ ul.project_files li a i {
 .price {
     font-size: 40px;
     font-weight: 400;
-    color: #26B99A;
+    color: #7C3AED;
     margin: 0
 }
 .prod_title {
@@ -4025,7 +4033,7 @@ fieldset {
     background-color: #3498DB
 }
 .progress-bar-success {
-    background-color: #26B99A
+    background-color: #7C3AED
 }
 .progress_summary .progress {
     margin: 5px 0 12px !important
@@ -4304,7 +4312,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     margin-bottom: 10px !important;
 }
 .green-font {
-    color: #26B99A;
+    color: #7C3AED;
 }
 .red-font {
     color: #da4343;
@@ -4318,7 +4326,8 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     color: #2d6eaf;
 }
 .font-style-3 {
-    color: #008181;
+    /* color: #008181; */
+    color: #7C3AED;
 }
 .readonly-text-area-style-1 {
     min-height: 90px;
@@ -4342,7 +4351,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     background: #f4f4f4;
     border-radius: 7px;
     padding: 20px 15px 15px;
-    border: 1px solid #26B99A;
+    border: 1px solid #7C3AED;
 }
 .membership-plan-card p {
     margin: 0;
@@ -4355,7 +4364,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     background: #f4f4f4;
     border-radius: 7px;
     padding: 20px 15px 15px;
-    /* border: 1px solid #26B99A; */
+    /* border: 1px solid #7C3AED; */
     color: #7a7a7a;
 }
 .membership-date-card p {
@@ -4383,7 +4392,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 }
 .membership-plan-card .plan-cost {
     font-size: 20px;
-    color: #26B99A;
+    color: #7C3AED;
     margin-top: 10px;
 }
 .member-select-radio {
@@ -4391,7 +4400,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     position: absolute;
 }
 .member-select-radio:checked + label .membership-plan-card {
-    background: #26B99A;
+    background: #7C3AED;
     color: #fff;
 }
 .member-select-radio:checked + label .plan-cost {
@@ -4408,8 +4417,19 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     margin-right: 10px;
 }
 .equal-height {
-    display: flex;
-    flex-direction: column;
+    /* display: flex; */
+    /* flex-direction: column; */
     height: 100%;
     width: 100%;
 }
+.transparent-font {
+    color: transparent;
+}
+.disable-btn {
+    pointer-events: none; /* Disables click */
+    cursor: default; /* Removes hand cursor */
+}
+
+/* #320089; */
+/* #4900c7; */
+/* #7C3AED; */

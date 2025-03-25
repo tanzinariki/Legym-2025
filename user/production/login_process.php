@@ -1,6 +1,5 @@
 <?php
 session_start();
-header("Content-Type: application/json");
 require_once 'db_connect.php'; // Include your DB connection file
 
 $response = []; // Array to store response messages
@@ -26,18 +25,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    $stmt = $conn->prepare("SELECT id, first_name, last_name, password FROM user WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id, first_name, last_name, password, status FROM user WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
+    if ($result->num_rows == 1) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['last_name'] = $user['last_name'];
             $_SESSION["user_email"] = $email;
+            $_SESSION["status"] = $user['status'];
             $response["status"] = "success";
             $response["message"] = "Login successful!";
             $response["redirect"] = "http://localhost/legym/user/production/dashboard.php";

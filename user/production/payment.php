@@ -8,6 +8,16 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
+require_once "db_connect.php"; // Include your database connection file
+
+// Query to get the Member Plans
+$qr = "SELECT *  
+        FROM membership_plan";
+
+$qr = $conn->prepare($qr);
+$qr->execute();
+$res = $qr->get_result();
+
 require_once 'inc/header.php';
 ?>
     <div class="container body">
@@ -46,35 +56,29 @@ require_once 'inc/header.php';
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <form id="in-person-fitness-form" data-parsley-validate class="form-horizontal form-label-left">
+                            <form id="pay-form" data-parsley-validate class="form-horizontal form-label-left">
                                 <div class="form-group">
                                     <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12" style="font-size: 15px;">
                                         Select Membership Plan <span class="required">*</span>
                                     </label>
-                                    <input class="member-select-radio" type="radio" name="plan-name" id="plan-name-1" value="basic">
-                                    <label for="plan-name-1" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                        <div class="x_content membership-plan-card">
-                                            <p style="font-weight: bold;">Basic</p>
-                                            <p class="plan-cost">29.99$</p>
-                                            <span>per month</span>
-                                        </div>
-                                    </label>
-                                    <input class="member-select-radio" type="radio" name="plan-name" id="plan-name-2" value="basic">
-                                    <label for="plan-name-2" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                        <div class="x_content membership-plan-card">
-                                            <p style="font-weight: bold;">Pro</p>
-                                            <p class="plan-cost">49.99$</p>
-                                            <span>per month</span>
-                                        </div>
-                                    </label>
-                                    <input class="member-select-radio" type="radio" name="plan-name" id="plan-name-3" value="basic">
-                                    <label for="plan-name-3" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                        <div class="x_content membership-plan-card">
-                                            <p style="font-weight: bold;">Elite</p>
-                                            <p class="plan-cost">79.99$</p>
-                                            <span>per month</span>
-                                        </div>
-                                    </label>
+                                    <?php
+                                    if ($res->num_rows > 0) {
+                                        $i = 1;
+                                        while ($membership_plan = $res->fetch_assoc()) {
+                                            echo '<input class="member-select-radio" type="radio" name="membership_plan_id" id="plan-name-'.$i.'" value="'.$membership_plan['id'].'">';
+                                            echo '<label for="plan-name-'.$i.'" class="col-lg-4 col-md-4 col-sm-6 col-xs-12">';
+                                            echo '<div class="x_content membership-plan-card">';
+                                            echo '<p style="font-weight: bold;">'.$membership_plan['plan_name'].'</p>';
+                                            echo '<p class="plan-cost">'.$membership_plan['plan_cost'].'$</p>';
+                                            echo '<span>per month</span>';
+                                            echo '</div>';
+                                            echo '</label>';
+                                            echo '<input type="hidden" id="pn'.$i.'" value="'.$membership_plan['plan_name'].'">';
+                                            echo '<input type="hidden" id="pc'.$i.'" value="'.$membership_plan['plan_cost'].'">';
+                                            $i++;
+                                        }
+                                    }
+                                    ?>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -83,7 +87,7 @@ require_once 'inc/header.php';
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="radio payment-method">
                                             <label>
-                                                <input type="radio" class="flat" name="pay-method" id="pay-method-1" value="card" />
+                                                <input type="radio" checked class="flat" name="pay-method" id="pay-method-1" value="card" />
                                                 Debit/Credit Card
                                             </label>
                                         </div>
@@ -97,7 +101,7 @@ require_once 'inc/header.php';
                                         <input 
                                             type="text" 
                                             id="card-no" 
-                                            name="card-no"
+                                            name="card_number"
                                             required="required"
                                             class="form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" 
                                             data-inputmask="'mask' : '9999-9999-9999-9999'"
@@ -112,7 +116,7 @@ require_once 'inc/header.php';
                                         <input 
                                             type="text" 
                                             id="card-expire" 
-                                            name="card-expire"
+                                            name="card_expire_date"
                                             required="required"
                                             class="form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" 
                                             data-inputmask="'mask' : '99/99'"
@@ -127,7 +131,7 @@ require_once 'inc/header.php';
                                         <input 
                                             type="text" 
                                             id="card-cvv" 
-                                            name="card-cvv"
+                                            name="card_cvv"
                                             required="required"
                                             class="form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" 
                                             data-inputmask="'mask' : '9999'"
@@ -140,16 +144,16 @@ require_once 'inc/header.php';
                                         <table class="table">
                                             <tbody>
                                                 <tr>
-                                                    <th style="width:50%">Plan Name</th>
-                                                    <td style="text-align: right;">29.99 $</td>
+                                                    <th style="width:50%" id="p_name">Plan Name</th>
+                                                    <td style="text-align: right;" id="p_cost">00.00 $</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Tax (9.99%)</th>
-                                                    <td style="text-align: right;">2.99 $</td>
+                                                    <td style="text-align: right;" id="p_tax">00.00 $</td>
                                                 </tr>
                                                 <tr style="font-size: 20px; color: #26B99A;">
                                                     <th>Total:</th>
-                                                    <td style="text-align: right;"><input type="text" name="total-price" value="32.98" style="border: none; text-align: right;" />$</td>
+                                                    <td style="text-align: right;"><input type="text" id="p_total" name="total-price" value="00.00" style="border: none; text-align: right;" />$</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -167,7 +171,7 @@ require_once 'inc/header.php';
                                 </div>
                                 <div class="form-group">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <a href="payment.php" class="btn btn-success" style="float: left;">Confirm Payment</a>
+                                        <button class="btn btn-success" style="float: left;">Confirm Payment</button>
                                     </div>
                                 </div>
                             </form>
@@ -182,3 +186,47 @@ require_once 'inc/header.php';
       </div>
     </div>
 <?php require_once 'inc/footer.php'; ?>
+<script>
+    $(document).ready(function () {
+        $(".member-select-radio").change(function (e) {
+            let p_name = $("#pn" + this.value).val();
+            let p_cost = parseFloat($("#pc" + this.value).val());
+            let p_tax = Math.floor(parseFloat(p_cost) * 0.10 * 100) / 100;
+            let p_total = (p_cost + parseFloat(p_tax)).toFixed(2); 
+            $("#p_name").html(p_name);
+            $("#p_cost").html(p_cost);
+            $("#p_tax").html(p_tax);
+            $("#p_total").val(p_total);
+        });
+        $("#pay-form").submit(function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: "payment_process.php",
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            confirmButtonText: "OK"
+                        }).then(() => {
+                            window.location.href = "legym/user/production/dashboard.php";
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: response.message,
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    
+                    }
+                }
+            });
+        });
+    });
+</script>

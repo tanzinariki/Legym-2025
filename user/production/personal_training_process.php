@@ -54,7 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if the trainer is already booked for that slot (by any user)
     $stmt = $conn->prepare("SELECT id FROM user_personal_training 
                             WHERE trainer_availability_id = ? 
-                              AND cancel_at IS NULL");
+                              AND cancel_at IS NULL
+                              AND status = 'Booked");
     $stmt->bind_param("i", $trainer_availability_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -72,7 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             FROM user_personal_training up
                             JOIN trainer_availability ta ON up.trainer_availability_id = ta.id
                             WHERE up.user_id = ? AND ta.date = ? AND ta.timeslot = ? 
-                              AND up.cancel_at IS NULL");
+                              AND up.cancel_at IS NULL
+                              AND up.status = 'Booked'");
     $stmt->bind_param("iss", $user_id, $formatted_date, $timeslot);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -85,10 +87,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // Insert the new booking record.
+    $booked = 'Booked';
     $stmt = $conn->prepare("INSERT INTO user_personal_training 
-                            (trainer_availability_id, user_id, booking_at) 
+                            (trainer_availability_id, user_id, booking_at, status) 
                             VALUES (?, ?, NOW())");
-    $stmt->bind_param("ii", $trainer_availability_id, $user_id);
+    $stmt->bind_param("iis", $trainer_availability_id, $user_id, $booked);
     if ($stmt->execute()) {
         $response["status"] = "success";
         $response["message"] = "Personal training session booked successfully.";
@@ -124,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $result = $stmt->get_result();
             if ($row = $result->fetch_assoc()) {
                 $update_sql = "UPDATE user_personal_training 
-                               SET cancel_at = NOW() 
+                               SET cancel_at = NOW(), status = 'Canceled' 
                                WHERE id = ?";
                 $update_stmt = $conn->prepare($update_sql);
                 $update_stmt->bind_param("i", $booking_id);

@@ -1,8 +1,5 @@
 <?php
 session_start();
-header("Content-Type: application/json"); // Ensure JSON response
-error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-ini_set('display_errors', 1);
 require_once "db_connect.php"; // Include your database connection file
 
 $response = []; // Array to store response messages

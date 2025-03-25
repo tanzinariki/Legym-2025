@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xl-2 col-lg-2 col-md-12">
                 <div class="logo_02">
-                    <a href="index.html"><img src="src/img/leGym.png" alt=""/></a>
+                    <a href="index.php"><img src="src/img/leGym.png" alt=""/></a>
                 </div>
                 <div class="mobileMenuBar">
                     <?php
@@ -24,12 +24,10 @@
             <div class="col-xl-7 col-lg-7 col-md-12">
                 <nav class="mainmenu text-center">
                     <ul>
-                        <li class="current-menu-item"><a href="index.html">Home</a></li>
-                        <li class=""><a href="index.html#services">Services</a></li>
-                        <li class=""><a href="index.html#memberships">Pricing</a></li>
-                        <li class=""><a href="schedules.html" target="_blank">Schedule</a></li>
-                        <li class=""><a href="announcements.html" target="_blank">Announcements</a></li>
-                        <li class=""><a href="index.html#contactus">Contact</a></li>
+                        <li class="<?php echo $_SERVER['PHP_SELF'] == '/legym/index.php' ? 'current-menu-item' : ''; ?>"><a href="index.php">Home</a></li>
+                        <li class="<?php echo $_SERVER['PHP_SELF'] == '/legym/schedules.php' ? 'current-menu-item' : ''; ?>"><a href="schedules.php" target="_blank">Schedule</a></li>
+                        <li class="<?php echo $_SERVER['PHP_SELF'] == '/legym/announcements.php' ? 'current-menu-item' : ''; ?>"><a href="announcements.php" target="_blank">Announcements</a></li>
+                        <li class="<?php echo $_SERVER['PHP_SELF'] == '/legym/contact_us.php' ? 'current-menu-item' : ''; ?>"><a href="contact_us.php">Contact</a></li>
                     </ul>
                 </nav>
             </div>
