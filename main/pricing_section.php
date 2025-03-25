@@ -44,7 +44,7 @@ $res_membership_plan = $qr->get_result();
             <div class="col-xl-4 col-lg-6 col-md-6 col-xs-12">
                 <div class="membershipDetail">
                     <h4 class="planName">Basic</h4>
-                    <p class="planPrice">29$<span class="slashStyle">/</span><span class="smallSpan">month</span></p>
+                    <p class="planPrice">29.99$<span class="slashStyle">/</span><span class="smallSpan">month</span></p>
                     <ul>
                         <li>
                             <img src="src/img/services/tick.png" alt="" class="tickImg" />
@@ -70,20 +70,20 @@ $res_membership_plan = $qr->get_result();
             </div>
             <div class="col-xl-4 col-lg-6 col-md-6 col-xs-12">
                 <div class="membershipDetail">
-                    <h4 class="planName">Basic</h4>
-                    <p class="planPrice">29$<span class="slashStyle">/</span><span class="smallSpan">month</span></p>
+                    <h4 class="planName">Elite</h4>
+                    <p class="planPrice">59.99$<span class="slashStyle">/</span><span class="smallSpan">month</span></p>
                     <ul>
                         <li>
                             <img src="src/img/services/tick.png" alt="" class="tickImg" />
-                            <span class="planFeature">Access to gym facilities</span>
+                            <span class="planFeature">All Basic Features</span>
                         </li>
                         <li>
                             <img src="src/img/services/tick.png" alt="" class="tickImg" />
-                            <span class="planFeature">Basic fitness classes</span>
+                            <span class="planFeature">Personal Training Session</span>
                         </li>
                         <li>
                             <img src="src/img/services/tick.png" alt="" class="tickImg" />
-                            <span class="planFeature">Locker rental</span>
+                            <span class="planFeature">Premium Classes</span>
                         </li>
                     </ul>
                     <?php
@@ -97,20 +97,20 @@ $res_membership_plan = $qr->get_result();
             </div>
             <div class="col-xl-4 offset-xl-0 col-lg-6 offset-lg-0 col-md-6 offset-md-3 col-xs-12">
                 <div class="membershipDetail">
-                    <h4 class="planName">Basic</h4>
-                    <p class="planPrice">29$<span class="slashStyle">/</span><span class="smallSpan">month</span></p>
+                    <h4 class="planName">Premium</h4>
+                    <p class="planPrice">79.99$<span class="slashStyle">/</span><span class="smallSpan">month</span></p>
                     <ul>
                         <li>
                             <img src="src/img/services/tick.png" alt="" class="tickImg" />
-                            <span class="planFeature">Access to gym facilities</span>
+                            <span class="planFeature">All Elite Features</span>
                         </li>
                         <li>
                             <img src="src/img/services/tick.png" alt="" class="tickImg" />
-                            <span class="planFeature">Basic fitness classes</span>
+                            <span class="planFeature">Unlimited Personal Training Sessions</span>
                         </li>
                         <li>
                             <img src="src/img/services/tick.png" alt="" class="tickImg" />
-                            <span class="planFeature">Locker rental</span>
+                            <span class="planFeature">Guest Passes</span>
                         </li>
                     </ul>
                     <?php
