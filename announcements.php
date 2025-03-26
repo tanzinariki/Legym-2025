@@ -11,7 +11,11 @@ require_once 'inc/header_section.php';
                     <div class="col-xl-10 offset-lg-1 col-lg-10 offset-lg-1 col-md-12 col-xs-12">
                         <div class="announcement-head-card">
                             <h3>Announcement</h3>
-                            <p>Short Description</p>
+                            <p>
+                            Welcome to the Le Gym Announcements page! 
+                            Stay updated with the latest news, special events, schedule changes, and exciting offers. 
+                            Whether it’s new classes, maintenance updates, or special promotions, you’ll find all the important information here
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -29,8 +33,8 @@ require_once 'inc/header_section.php';
                                     <div class="announcement-card mrb-20">
                                         <div class="announcement-desc">
                                             <p class="announcement-name mrb-5">Temporary Pool Class</p>
-                                            <p class="announcement-detail mrb-5">The swimming pool will be closed for maintenance from March 15-17, 2025. We apologize for any inconvenience.</p>
-                                            <p class="announcement-date">Posted on <span>March 10, 2025</span></p>
+                                            <p class="announcement-detail mrb-5">The swimming pool will be closed for maintenance from March 28-30, 2025. We apologize for any inconvenience.</p>
+                                            <p class="announcement-date">Posted on <span>March 25, 2025</span></p>
                                         </div>
                                         <div class="announcement-urgency">
                                             <button class="btn btn-info btn-sm announcement-urgent-btn">Urgent</button>
@@ -42,7 +46,7 @@ require_once 'inc/header_section.php';
                                         <div class="announcement-desc">
                                             <p class="announcement-name mrb-5">New Yoga Class Added</p>
                                             <p class="announcement-detail mrb-5">We're excited to announce new morning yoga classes starting next week. Check the schedule for details.</p>
-                                            <p class="announcement-date">Posted on <span>March 8, 2025</span></p>
+                                            <p class="announcement-date">Posted on <span>March 26, 2025</span></p>
                                         </div>
                                         <div class="announcement-urgency">
                                             <button class="btn btn-info btn-sm announcement-normal-btn">Normal</button>
@@ -61,7 +65,7 @@ require_once 'inc/header_section.php';
                 <div class="row">
                     <div class="col-xl-10 offset-lg-1 col-lg-10 offset-lg-1 col-md-12 col-xs-12">
                         <div class="post-announcement-card">
-                            <h5>Post Announcements</h5>
+                            <h5>Past Announcements</h5>
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-xs-12">
                                     <div class="table-responsive">

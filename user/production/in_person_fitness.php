@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-if ($_SESSION['status'] != 'active') {
+if ($_SESSION['status'] != 'Active') {
     header("Location: http://localhost/legym/user/production/dashboard.php");
     exit;
 }

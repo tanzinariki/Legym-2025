@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 25, 2025 at 06:21 AM
+-- Generation Time: Mar 26, 2025 at 06:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -41,10 +41,10 @@ CREATE TABLE `challenges` (
 --
 
 INSERT INTO `challenges` (`id`, `name`, `description`, `start_date`, `end_date`, `reward`) VALUES
-(1, '7-Day Step Challenge', 'Walk or run a total of 50,000 steps in 7 days.', '2025-03-15', '2025-03-21', 'Free water bottle'),
-(2, 'Plank Endurance', 'Hold a plank position for a total of 30 minutes across 7 days.', '2025-03-16', '2025-03-22', 'Exclusive gym towel'),
-(3, 'Daily Workout Streak', 'Complete a 30-minute workout every day for 7 days.', '2025-03-21', '2025-03-27', 'Gym discount coupon'),
-(4, 'Squat Challenge', 'Complete 500 squats in total within 7 days.', '2025-03-22', '2025-03-28', 'Free protein bar');
+(1, '7-Day Step Challenge', 'Walk or run a total of 50,000 steps in 7 days.', '2025-03-15', '2025-03-21', 'gold##Top 3 performers#Free water Bottle'),
+(2, 'Plank Endurance', 'Hold a plank position for a total of 30 minutes across 7 days.', '2025-03-25', '2025-03-28', 'gold##Top 3 performers#Free water Bottle'),
+(3, 'Daily Workout Streak', 'Complete a 30-minute workout every day for 7 days.', '2025-03-25', '2025-03-31', 'gold##Top 3 performers#Free water Bottle'),
+(4, 'Squat Challenge', 'Complete 500 squats in total within 7 days.', '2025-03-26', '2025-04-03', 'gold##Top 3 performers#Free water Bottle');
 
 -- --------------------------------------------------------
 
@@ -202,7 +202,9 @@ INSERT INTO `training` (`id`, `class_id`, `training_date`, `training_time`, `onl
 (1, 1, '2025-03-24', '10:00:00', NULL, 1, NULL, '2025-03-21 03:47:32', '2025-03-21 03:47:32', 5),
 (2, 3, '2025-03-27', '11:00:00', NULL, 5, NULL, '2025-03-21 03:47:32', '2025-03-21 03:47:32', 4),
 (3, 5, '2025-03-28', '13:00:00', 'https://zoom.us/j/1234567890', 4, NULL, '2025-03-21 03:49:49', '2025-03-21 03:49:49', 10),
-(4, 6, '2025-03-29', '16:00:00', 'https://zoom.us/j/1234567890', 3, NULL, '2025-03-21 03:49:49', '2025-03-21 03:49:49', 8);
+(4, 6, '2025-03-29', '16:00:00', 'https://zoom.us/j/1234567890', 3, NULL, '2025-03-21 03:49:49', '2025-03-21 03:49:49', 8),
+(5, 2, '2025-03-28', '11:00:00', NULL, 3, NULL, '2025-03-26 17:17:17', '2025-03-26 17:17:17', 10),
+(6, 8, '2025-03-28', '11:00:00', 'https://zoom.us/j/1234567890', 4, NULL, '2025-03-26 17:17:17', '2025-03-26 17:17:17', 10);
 
 -- --------------------------------------------------------
 
@@ -235,7 +237,6 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `fitness_goal`, `user_image`, `health_condition`, `membership_plan_id`, `membership_start_date`, `membership_end_date`, `status`, `created_at`, `updated_at`, `card_number`, `card_expire_date`, `card_cvv`) VALUES
-(1, 'Tanzina', 'Nasrin', 'nasrintanzina@gmail.com', '$2y$10$hCT3msBSyRk0zN1V12uoDOqhy8KWe9j/zmYKPVstHZiS2Q7C0QekW', NULL, '', NULL, 1, '2025-03-01', '2026-02-28', 'Active', '2025-03-21 05:13:58', '2025-03-21 05:13:58', '1234567812345678', '12/30', '123'),
 (2, 'Claudia', 'Nasrin', 'aa@gmail.com', '$2y$10$65fU3URBWq0A9KtlHkJK4O1rd9ESSVplBOeOhupsfvGwVMuC9mExe', NULL, '', NULL, NULL, NULL, NULL, NULL, '2025-03-21 06:52:45', '2025-03-21 06:52:45', NULL, NULL, NULL),
 (3, 'Oleg', 'Fuentes', 'gihuqameki@mailinator.com', '$2y$10$iM92EncKIMQ46/LWdH/n0e1pZMtqbOS1RIC3Docv.Dqr/omoPzvOS', NULL, '', NULL, NULL, NULL, NULL, NULL, '2025-03-21 06:55:13', '2025-03-21 06:55:13', NULL, NULL, NULL),
 (4, 'Isabelle', 'Knight', 'app@help.com', '$2y$10$fORp9Xn/to4GVAhEvNZjH.aCmktGAGh//YJS.NHQge5Yz.5b//fD6', NULL, '', NULL, 2, '2025-03-23', '2026-03-22', 'Active', '2025-03-21 06:59:04', '2025-03-24 02:40:11', '1234-5678-9012-3456', '12/34', '123'),
@@ -243,7 +244,8 @@ INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `fitne
 (6, 'Autumn', 'Kramer', 'cahowec@mailinator.com', '$2y$10$kvHXq2xtb9592JekiqaAROWT.Hhx.hceR0s4.BUWGXvKH5pH7pqiW', 'Weight Loss, Gain Muscle', '', 'Dolor voluptatem Se', NULL, NULL, NULL, NULL, '2025-03-21 11:27:23', '2025-03-21 11:27:23', NULL, NULL, NULL),
 (7, 'Lucy', 'Branch', 'cawedulaje@mailinator.com', '$2y$10$snW8SyBT72i6EN/0UwO81OifjEInmdjWAvoxsB9GDgK1CW/hUA86a', '', '', 'Qui et fugit except', NULL, NULL, NULL, NULL, '2025-03-21 11:28:23', '2025-03-21 11:28:23', NULL, NULL, NULL),
 (8, 'Jaquelyn', 'Boone', 'jijubor@mailinator.com', '$2y$10$6O.RYf3SjZNZfUxqDnyY1OAUnBtCFxMDHiefzpIuXU8AVru259rHm', 'Athelate Shape', '', 'Rerum non quasi inve', NULL, NULL, NULL, NULL, '2025-03-22 01:53:56', '2025-03-22 01:53:56', NULL, NULL, NULL),
-(9, 'Tanni', 'Saima', 'ts@help.com', '$2y$10$5UpGIkkEm5DJ5l7miCxOQer0/ZCOHuPON9AWtatoFRLRezwGGIMPC', 'Weight Loss, Athelate Shape', '', 'no', 3, '2025-03-23', '2026-03-22', 'Active', '2025-03-22 02:13:43', '2025-03-24 01:24:14', '1234-5678-1234-5678', '11/22', '123');
+(9, 'Tanni', 'Saima', 'ts@help.com', '$2y$10$5UpGIkkEm5DJ5l7miCxOQer0/ZCOHuPON9AWtatoFRLRezwGGIMPC', 'Weight Loss, Athelate Shape', '', 'no', 3, '2025-03-23', '2026-03-22', 'Active', '2025-03-22 02:13:43', '2025-03-24 01:24:14', '1234-5678-1234-5678', '11/22', '123'),
+(10, 'Tanzina', 'Nasrin', 'nasrintanzina@gmail.com', '$2y$10$7onNxcp9vldmFPvhFZKoOOOHSeD9RCaZW4gGOyL6xcVjsQ42d2w2O', 'Weight Loss', '', 'Ashtma', 2, '2025-03-26', '2026-03-25', 'Active', '2025-03-26 16:58:01', '2025-03-26 17:12:02', '5678456326784903', '08/27', '5647');
 
 -- --------------------------------------------------------
 
@@ -266,13 +268,7 @@ CREATE TABLE `user_challenges` (
 --
 
 INSERT INTO `user_challenges` (`id`, `user_id`, `challenge_id`, `progress`, `joined_time`, `completion_time`, `status`) VALUES
-(1, 1, 4, 100, '2025-03-23 01:15:53', '2025-03-23 01:37:25', NULL),
-(2, 1, 3, 10, '2025-03-22 01:15:53', NULL, NULL),
-(3, 1, 2, 50, '2025-03-15 01:15:53', NULL, NULL),
-(4, 1, 1, 100, '2025-03-17 01:15:53', '2025-03-21 01:38:49', NULL),
-(5, 4, 1, 0, '2025-03-25 01:12:42', NULL, 'joined'),
-(6, 4, 2, 0, '2025-03-25 01:14:29', NULL, 'joined'),
-(7, 4, 3, 0, '2025-03-25 01:18:03', NULL, 'joined');
+(5, 10, 1, 100, '2025-03-25 01:12:42', NULL, 'joined');
 
 -- --------------------------------------------------------
 
@@ -296,15 +292,13 @@ CREATE TABLE `user_locker` (
 --
 
 INSERT INTO `user_locker` (`id`, `user_id`, `locker_id`, `rent_date`, `rent_duration`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2025-03-23', '09:00 AM - 11:00 AM', NULL, '2025-03-23 06:08:36', '2025-03-23 06:08:36'),
 (2, 9, 2, '2025-03-23', '09:00 AM - 11:00 AM', NULL, '2025-03-23 06:08:36', '2025-03-23 06:08:36'),
 (3, 4, 3, '2025-03-23', '09:00 AM - 11:00 AM', NULL, '2025-03-23 06:08:36', '2025-03-23 06:08:36'),
 (4, 5, 4, '2025-03-23', '09:00 AM - 11:00 AM', NULL, '2025-03-23 06:08:36', '2025-03-23 06:08:36'),
 (5, 7, 5, '2025-03-23', '09:00 AM - 11:00 AM', NULL, '2025-03-23 06:08:36', '2025-03-23 06:08:36'),
 (6, 8, 6, '2025-03-23', '09:00 AM - 11:00 AM', NULL, '2025-03-23 06:08:36', '2025-03-23 06:08:36'),
 (7, 3, 1, '2025-03-23', '11:00 AM - 01:00 PM', NULL, '2025-03-23 06:08:36', '2025-03-23 06:08:36'),
-(8, 1, 3, '2025-03-22', '11:00 AM - 01:00 PM', NULL, '2025-03-23 06:27:15', '2025-03-23 06:27:15'),
-(9, 1, 2, '2025-03-23', '05:00 PM - 07:00 PM', NULL, '2025-03-23 06:37:12', '2025-03-23 06:37:12');
+(10, 10, 1, '2025-03-26', '07:00 PM - 09:00 PM', 'Booked', '2025-03-26 17:10:50', '2025-03-26 17:10:50');
 
 -- --------------------------------------------------------
 
@@ -327,10 +321,7 @@ CREATE TABLE `user_personal_training` (
 
 INSERT INTO `user_personal_training` (`id`, `trainer_availability_id`, `user_id`, `booking_at`, `cancel_at`, `status`) VALUES
 (1, 1, 4, '2025-03-22 09:00:49', '2025-03-22 05:01:22', 'Canceled'),
-(2, 1, 4, '2025-03-22 09:02:22', '2025-03-25 01:05:32', 'Canceled'),
-(3, 1, 1, '2025-03-22 09:03:45', '2025-03-25 00:33:47', 'Canceled'),
-(4, 2, 1, '2025-03-23 05:10:39', '2025-03-22 01:10:01', 'Canceled'),
-(5, 2, 1, '2025-03-23 05:10:39', NULL, 'Booked');
+(2, 1, 4, '2025-03-22 09:02:22', '2025-03-25 01:05:32', 'Canceled');
 
 -- --------------------------------------------------------
 
@@ -352,13 +343,13 @@ CREATE TABLE `user_training` (
 --
 
 INSERT INTO `user_training` (`id`, `training_id`, `user_id`, `booking_time`, `cancel_time`, `status`) VALUES
-(4, 2, 1, '2025-03-23 02:41:06', NULL, 'Booked'),
-(5, 3, 1, '2025-03-23 02:41:06', NULL, 'Booked'),
 (6, 4, 4, '2025-03-23 02:41:06', NULL, 'Booked'),
 (7, 1, 9, '2025-03-23 02:41:06', NULL, 'Booked'),
 (8, 2, 9, '2025-03-23 02:41:06', NULL, 'Booked'),
 (9, 3, 9, '2025-03-23 02:41:06', '2025-03-22 23:38:54', 'Canceled'),
-(10, 4, 9, '2025-03-23 02:41:06', NULL, 'Booked');
+(10, 4, 9, '2025-03-23 02:41:06', NULL, 'Booked'),
+(11, 3, 10, '2025-03-26 16:59:24', NULL, 'Booked'),
+(13, 2, 10, '2025-03-26 17:10:03', NULL, 'Booked');
 
 --
 -- Indexes for dumped tables
@@ -492,25 +483,25 @@ ALTER TABLE `trainer_availability`
 -- AUTO_INCREMENT for table `training`
 --
 ALTER TABLE `training`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `user_challenges`
 --
 ALTER TABLE `user_challenges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `user_locker`
 --
 ALTER TABLE `user_locker`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `user_personal_training`
@@ -522,7 +513,7 @@ ALTER TABLE `user_personal_training`
 -- AUTO_INCREMENT for table `user_training`
 --
 ALTER TABLE `user_training`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables

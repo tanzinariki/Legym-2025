@@ -228,7 +228,7 @@ if ($action === 'filter') {
     }
     $insertQuery = "
         INSERT INTO user_training (training_id, user_id, booking_time, status)
-        VALUES (?, ?, NOW(), 'Reserved')
+        VALUES (?, ?, NOW(), 'Booked')
     ";
     $stmt = $conn->prepare($insertQuery);
     $stmt->bind_param("ii", $trainingId, $userId);
