@@ -154,7 +154,29 @@ require_once 'inc/header.php';
                                         </label>
                                         <div class="col-md-12">
                                             <div class="row">
-                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                                <?php $rewards = explode('|', htmlspecialchars($selectedChallenge['reward'])) ?>
+                                                <?php foreach ($rewards as $reward): ?>
+                                                    <?php $reward = explode('##', $reward) ?>
+                                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                                        <div class="x_content reward-card">
+                                                            <img 
+                                                            <?php 
+                                                                if ($reward[0] == 'reward') {
+                                                                    echo 'src="images/fitness-challenge/bonus-reward.png"';
+                                                                } else if ($reward[0] == 'top') {
+                                                                    echo 'src="images/fitness-challenge/top-3.png"';
+                                                                } else {
+                                                                    echo 'src="images/fitness-challenge/gold-badge.png"';
+                                                                }
+                                                            ?>
+                                                             />
+                                                            <?php $reward_des = explode('#', $reward[1]) ?>
+                                                            <p><?= htmlspecialchars($reward_des[0]) ?></p>
+                                                            <span><?= htmlspecialchars($reward_des[1]) ?></span>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                                <!-- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                                                     <div class="x_content reward-card">
                                                         <img src="images/fitness-challenge/gold-badge.png" />
                                                         <p>Gold Badge</p>
@@ -170,11 +192,11 @@ require_once 'inc/header.php';
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
                                                     <div class="x_content reward-card">
-                                                        <img src="images/fitness-challenge/bonus-points.png" />
+                                                        <img src="images/fitness-challenge/bonus-reward.png" />
                                                         <p>Bonus Point</p>
                                                         <span>Daily Competition</span>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>

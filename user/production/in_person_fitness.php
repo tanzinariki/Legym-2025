@@ -7,6 +7,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if ($_SESSION['status'] != 'active') {
+    header("Location: http://localhost/legym/user/production/dashboard.php");
+    exit;
+}
+
 // Define full name
 if (isset($_SESSION['first_name'], $_SESSION['last_name'])) {
     $fullname = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];

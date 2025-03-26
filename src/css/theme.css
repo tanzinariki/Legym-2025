@@ -8543,6 +8543,9 @@ blockquote h6{
     border: none;
     padding: 3px 10px;
 }
+.join-class .ind_btn_2:hover {
+    color: #7C3AED !important;
+}
 .post-announcement-table thead th {
     border-top: none;
     border-bottom-width: 1px;

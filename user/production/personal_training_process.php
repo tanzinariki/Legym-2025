@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare("SELECT id FROM user_personal_training 
                             WHERE trainer_availability_id = ? 
                               AND cancel_at IS NULL
-                              AND status = 'Booked");
+                              AND status = 'Booked'");
     $stmt->bind_param("i", $trainer_availability_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $booked = 'Booked';
     $stmt = $conn->prepare("INSERT INTO user_personal_training 
                             (trainer_availability_id, user_id, booking_at, status) 
-                            VALUES (?, ?, NOW())");
+                            VALUES (?, ?, NOW(), ?)");
     $stmt->bind_param("iis", $trainer_availability_id, $user_id, $booked);
     if ($stmt->execute()) {
         $response["status"] = "success";

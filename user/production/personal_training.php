@@ -37,8 +37,8 @@ $conn->close();
     <meta charset="UTF-8">
     <title>Book Personal Training Session</title>
     <!-- Include CSS files (local or CDN) -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/select2.min.css" rel="stylesheet">
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link href="css/select2.min.css" rel="stylesheet"> -->
     <style>
         .required { color: red; }
         .label-training-session { margin-right: 5px; }
@@ -214,9 +214,9 @@ $conn->close();
 </div>
 
 <!-- Include JS libraries -->
-<script src="js/jquery.min.js"></script>
-<script src="js/select2.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<!-- <script src="js/jquery.min.js"></script> -->
+<!-- <script src="js/select2.min.js"></script> -->
+<!-- <script src="js/bootstrap.min.js"></script> -->
 <script>
 $(document).ready(function() {
     $('.select2-single').select2();
