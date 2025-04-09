@@ -167,30 +167,30 @@ $res_online_classes = $qr->get_result();
 $(document).ready(function() {
 	$('.select2-single').select2();
 
-	$('.select-card-container').each(function () {
-		var $container = $(this);
-		var $content = $container.find('.select-card-limited');
-		var $readMore = $container.parent().find('.read-more');
+	// $('.select-card-container').each(function () {
+	// 	var $container = $(this);
+	// 	var $content = $container.find('.select-card-limited');
+	// 	var $readMore = $container.parent().find('.read-more');
 
-		$container.css('max-height', 'none');
-		var fullHeight = $content.outerHeight();
-		console.log("Full Height:", fullHeight);
+	// 	$container.css('height', 'none');
+	// 	var fullHeight = $content.outerHeight();
+	// 	console.log("Full Height:", fullHeight);
 
-		if (fullHeight > 400) {
-			// $readMore.addClass('show');
-			// $readMore.show();
-			$container.css('max-height', '400px');
-		}
+	// 	if (fullHeight > 400) {
+	// 		// $readMore.addClass('show');
+	// 		// $readMore.show();
+	// 		$container.css('height', '400px');
+	// 	}
 
-		$readMore.on('click', function () {
-			$container.toggleClass('expanded');
-			if ($container.hasClass('expanded')) {
-				$readMore.text('Read Less');
-			} else {
-				$readMore.text('Read More');
-			}
-		});
-	});
+	// 	$readMore.on('click', function () {
+	// 		$container.toggleClass('expanded');
+	// 		if ($container.hasClass('expanded')) {
+	// 			$readMore.text('Read Less');
+	// 		} else {
+	// 			$readMore.text('Read More');
+	// 		}
+	// 	});
+	// });
 	
 	// Book
 	$(document).on('click', '.book-btn', function() {

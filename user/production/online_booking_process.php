@@ -19,7 +19,7 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 //         exit;
 //     }
 //     $query = "SELECT DISTINCT training_date FROM training WHERE class_id = ? AND training_date >= CURDATE() ORDER BY training_date ASC";
-//     $stmt = $db->prepare($query);
+//     $stmt = $conn->prepare($query);
 //     $stmt->bind_param("i", $online_class);
 //     $stmt->execute();
 //     $result = $stmt->get_result();
@@ -61,7 +61,7 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 //     }
 //     $query .= " ORDER BY t.training_date, t.training_time";
     
-//     $stmt = $db->prepare($query);
+//     $stmt = $conn->prepare($query);
 //     if (!empty($online_class)) {
 //         $stmt->bind_param("isi", $_SESSION['user_id'], $until_date_formatted, $online_class);
 //     } else {
@@ -126,7 +126,7 @@ if ($action == 'reserve') {
     $user_id = intval($_SESSION['user_id']);
     
     // Check if user already reserved this session.
-    $stmt = $db->prepare("SELECT id FROM user_training WHERE training_id = ? AND user_id = ?");
+    $stmt = $conn->prepare("SELECT id FROM user_training WHERE training_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $training_id, $user_id);
     $stmt->execute();
     $stmt->store_result();
@@ -137,7 +137,7 @@ if ($action == 'reserve') {
     $stmt->close();
     
     // Check seats available.
-    $stmt = $db->prepare("SELECT total_seats, online_training_link, (SELECT COUNT(*) FROM user_training WHERE training_id = ?) AS booked_count FROM training WHERE id = ?");
+    $stmt = $conn->prepare("SELECT total_seats, online_training_link, (SELECT COUNT(*) FROM user_training WHERE training_id = ?) AS booked_count FROM training WHERE id = ?");
     $stmt->bind_param("ii", $training_id, $training_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -155,7 +155,7 @@ if ($action == 'reserve') {
     }
     
     // Insert reservation.
-    $stmt = $db->prepare("INSERT INTO user_training (training_id, user_id, booking_time, status) VALUES (?, ?, NOW(), 'Booked')");
+    $stmt = $conn->prepare("INSERT INTO user_training (training_id, user_id, booking_time, status) VALUES (?, ?, NOW(), 'Booked')");
     $stmt->bind_param("ii", $training_id, $user_id);
     if ($stmt->execute()) {
         echo json_encode([
@@ -178,7 +178,7 @@ if ($action == 'reserve') {
     $user_id = intval($_SESSION['user_id']);
     
     // Check if booking exists.
-    $stmt = $db->prepare("SELECT id FROM user_training WHERE training_id = ? AND user_id = ?");
+    $stmt = $conn->prepare("SELECT id FROM user_training WHERE training_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $training_id, $user_id);
     $stmt->execute();
     $stmt->store_result();
@@ -189,7 +189,7 @@ if ($action == 'reserve') {
     $stmt->close();
     
     // Delete booking.
-    $stmt = $db->prepare("DELETE FROM user_training WHERE training_id = ? AND user_id = ?");
+    $stmt = $conn->prepare("DELETE FROM user_training WHERE training_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $training_id, $user_id);
     if ($stmt->execute()){
         echo json_encode(['success' => true, 'message' => 'Booking canceled successfully.']);
@@ -202,5 +202,5 @@ if ($action == 'reserve') {
     echo json_encode(['success' => false, 'message' => 'Invalid action.']);
     exit;
 }
-$db->close();
+$conn->close();
 exit;
