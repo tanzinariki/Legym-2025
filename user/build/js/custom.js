@@ -170,6 +170,53 @@ $(document).ready(function() {
         $ICON.toggleClass('fa-chevron-up fa-chevron-down');
     });
 
+    // $('.collapse-link-2').on('click', function() {
+    //     var $BOX_PANEL = $(this).closest('.x_panel'),
+    //         $ICON = $(this).find('i'),
+    //         $BOX_CONTENT = $BOX_PANEL.find('.x_content');
+        
+    //     // fix for some div with hardcoded fix class
+    //     if ($BOX_PANEL.attr('style')) {
+    //         $BOX_CONTENT.slideToggle(200, function(){
+    //             $BOX_PANEL.removeAttr('style');
+    //         });
+    //     } else {
+    //         $BOX_CONTENT.slideToggle(200); 
+    //         $BOX_PANEL.css('height', 'auto');  
+    //     }
+
+    //     $ICON.toggleClass('fa-minus fa-plus');
+    // });
+
+    $('.collapse-link-2').on('click', function() {
+        var $BOX_PANEL = $(this).closest('.x_panel'),
+			$ICON = $(this).find('i'),
+			$BOX_CONTENT = $BOX_PANEL.find('.x_content');
+			$BOX_SIBLINGS_PANEL = $BOX_PANEL.siblings(),
+			$BOX_SIBLINGS_ICON = $BOX_SIBLINGS_PANEL.find('i'),
+			$BOX_SIBLINGS_CONTENT = $BOX_SIBLINGS_PANEL.find('.x_content');
+        
+        // fix for some div with hardcoded fix class
+        if ($BOX_PANEL.attr('style')) {
+            $BOX_CONTENT.slideToggle(200, function(){
+                $BOX_PANEL.removeAttr('style');
+				$ICON.toggleClass('fa-minus fa-plus');
+            });
+        } else {
+            $BOX_CONTENT.slideToggle(200, function(){
+				$BOX_PANEL.css('height', 'auto'); 
+				$ICON.toggleClass('fa-minus fa-plus');
+			});
+			$BOX_SIBLINGS_CONTENT.slideUp(200);
+			if ($BOX_SIBLINGS_ICON.hasClass('fa-minus')) {
+				$BOX_SIBLINGS_PANEL.removeAttr('style');
+				$BOX_SIBLINGS_ICON.removeClass('fa-minus').addClass('fa-plus');
+			}
+        }
+
+        
+    });
+
     $('.close-link').click(function () {
         var $BOX_PANEL = $(this).closest('.x_panel');
 

@@ -3,6 +3,11 @@
         
         <ul class="nav side-menu">
             <li class="">   
+                <a href="../../index.php">
+                    <i class="fa fa-globe"></i>Home
+                </a>
+            </li>
+            <li class="">   
                 <a href="dashboard.php">
                     <i class="fa fa-home"></i>Dashboard
                 </a>
@@ -12,7 +17,7 @@
             ?>
             <li>   
                 <a href="online_booking.php">
-                    <i class="fa fa-laptop"></i>Online Class Booking
+                    <i class="fa fa-laptop"></i>Online Classes
                 </a>
             </li>
             <li>   

@@ -58,7 +58,7 @@ if (isset($_POST['agree'])) {
         exit();
     }
 
-    if (strlen($card_cvv) < 4) {
+    if (strlen($card_cvv) != 3 && strlen($card_cvv) != 4) {
         echo json_encode(["status" => "error", "message" => "CVV should contain 3 or 4 digits!"]);
         exit();
     }

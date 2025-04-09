@@ -250,27 +250,67 @@ Project Name: Le Gym
             }
         }
     });
+
+    var totalItems = $(".teamslider .singleTeam").length; // Count total slides
+    var maxDots = 6;
+
+    // Make sure we don't exceed 8 dots
+    var dots = totalItems > maxDots ? maxDots : totalItems;
+    
+    // Calculate the number of items per dot
+    var dotsEach = Math.ceil(totalItems / maxDots);
+    console.log("Total items: " + totalItems + ", Dots Each: " + dotsEach);
     
     $('.teamslider').owlCarousel({
-        autoplay: true,
-        loop:true,
-        margin:30,
-        responsiveClass:true,
-        nav: false,
+        autoplay: false,
+        loop: false,
+        margin: 30,
+        responsiveClass: true,
+        nav: true,
         items: 3,
         dots: true,
+        stagePadding: 20,
+        // dotsEach: dotsEach,
+        onInitialized: function (e) {
+            $('.owl-prev').hide();
+        },
         responsive:{
             0:{
-                items:1
+                items:1,
+                dotsEach: 1,
             },
             600:{
-                items:2
+                items:2,
+                dotsEach: 2,
             },
             1200:{
-                items:3
+                items:3,
+                dotsEach: 3,
+            },
+            1800:{
+                items:4,
+                dotsEach: 4,
             }
+        },
+    });
+
+    $('.teamslider').on('initialized.owl.carousel changed.owl.carousel resized.owl.carousel', function(e) {
+    
+        // Hide left nav if on the first item
+        if (e.page.index == 0) {
+            $('.owl-prev').hide();
+        } else {
+            $('.owl-prev').show();
+        }
+    
+        // Hide right nav if on the last item
+        if (( e.page.index + 1 ) >= e.page.count) {
+            $('.owl-next').hide();
+        } else {
+            $('.owl-next').show();
         }
     });
+    
     
     $('.teamslider2').owlCarousel({
         loop:false,

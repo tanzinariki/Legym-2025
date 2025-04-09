@@ -1,4 +1,4 @@
-<div class="profile clearfix" style="padding-top: 20px; border-top: 1px solid;">
+<div class="profile clearfix" style="padding: 20px 5px 10px; border-top: 1px solid;">
     <div class="profile_pic">
     <img src="images/user.jpg" alt="..." class="img-circle profile_img">
     </div>

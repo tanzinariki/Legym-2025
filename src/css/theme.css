@@ -1889,24 +1889,24 @@ Project Name: Le Gym
 }
 .logo_02{
     position: relative;
-    margin-top: 20px;
+    margin: 15px 0 14px;
     /* margin-left: 10px; */
     /* padding: 30px 0 29px; */
-    /* padding: 10px 0 10px; */
+    /* padding: 6px 0; */
 }
 .logo_02 img{
     /* max-width: 100%; */
-    width: 105px;
-    height: auto;
+    width: 108px;
+    height: 27px;
     /* margin-top: 5px; */
 }
 .header_02 .mainmenu > ul > li{
     /* padding: 49px 0 48px; */
-    padding: 25px 0 23px;
+    padding: 19px 0 17px;
 }
 .header_02 .ind_btn_2{
     /* margin: 25px 0 0; */
-    margin: 10px 0 10px;
+    margin: 7px 0;
 }
 
 /*------------------------------------------------------------------------------
@@ -2506,10 +2506,11 @@ Project Name: Le Gym
     position: relative;
 }
 .singleTeam img{
-    display: block;
+    display: inline-block !important;
     width: 100%;
     height: auto;
-    margin-bottom: 42px;
+    margin-bottom: 25px;
+    border-radius: 10px;
 }
 .singleTeam span{
     display: block;
@@ -2521,11 +2522,11 @@ Project Name: Le Gym
     margin: 0 0 17px;
 }
 .singleTeam h3{
-    font-size: 36px;
+    font-size: 25px;
     text-transform: capitalize;
     color: #06163a;
     letter-spacing: -.72px;
-    line-height: .8;
+    line-height: 25px;
     margin: 0 0 23px;
 }
 .singleTeam h3 a{
@@ -2556,7 +2557,7 @@ Project Name: Le Gym
     color: #7C3AED;
 }
 .teamslider.owl-carousel{
-    padding-bottom: 44px;
+    padding-bottom: 25px;
 }
 .teamslider.owl-carousel .owl-dots{
     text-align: center;
@@ -2567,12 +2568,12 @@ Project Name: Le Gym
     width: 100%;
 }
 .teamslider.owl-carousel .owl-dots .owl-dot{
-    width: 20px;
-    height: 4px;
+    width: 10px;
+    height: 3px;
     display: inline-block;
     background: #ffddce;
     border-radius: 10px;
-    margin-right: 10px;
+    margin-right: 7px;
 
     transition: all ease 300ms;
     -moz-transition: all ease 300ms;
@@ -7067,8 +7068,12 @@ blockquote h6{
     opacity: 0;
     visibility: hidden;
     z-index: 9999;
+    border: 5px solid #FFF;
+    border-radius: 100%;
 }
 #backtotop i{
+    display: block;
+    height: 11px;
     position: relative;
     z-index: 2;
 }
@@ -7084,6 +7089,7 @@ blockquote h6{
     margin: auto;
     opacity: 0;
     visibility: hidden;
+    border-radius: 100%;
     background: #06163a;
 
     transition: all ease 300ms;
@@ -7100,6 +7106,21 @@ blockquote h6{
     visibility: visible;
     width: 100%;
     height: 100%;
+}
+#backtotop i {
+    animation: slide 1s linear infinite;
+}
+
+#backtotop .ar1 { animation-delay: 1s; }
+#backtotop .ar2 { animation-delay: 1s; }
+
+@keyframes slide {
+    from {
+        transform: translate(0, 12px);
+    }
+    to {
+        transform: translate(0, 5px);
+    }
 }
 /*----------------------------------------------------
 / 41. Color Preset
@@ -8543,10 +8564,25 @@ blockquote h6{
     border: none;
     padding: 3px 10px;
 }
-.join-class .ind_btn_2:hover {
-    color: #7C3AED !important;
-}
 .post-announcement-table thead th {
     border-top: none;
     border-bottom-width: 1px;
+}
+
+
+/*------------------------------------------------------------------------------
+/ 51. Owl Carousel
+------------------------------------------------------------------------------*/
+
+
+.teamslider .owl-nav button.owl-next, .teamslider .owl-nav button.owl-prev {
+    font-size: 90px;
+    position: absolute;
+    top: 250px;
+}
+.teamslider .owl-nav button.owl-prev {
+    left: -15px;
+}
+.teamslider .owl-nav button.owl-next {
+    right: -15px;
 }

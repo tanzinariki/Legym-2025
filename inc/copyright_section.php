@@ -10,4 +10,7 @@
     </div>
 </section>
 
-<a href="#" id="backtotop"><i class="fal fa-angle-double-up"></i></a>
+<a href="#" id="backtotop">
+    <i class="fal fa-angle-double-up ar1"></i>
+    <i class="fal fa-angle-double-up ar2"></i>
+</a>

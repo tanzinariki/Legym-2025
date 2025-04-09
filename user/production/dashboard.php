@@ -243,6 +243,7 @@ $qr->execute();
 $res_upcoming_session = $qr->get_result();
 
 require_once 'inc/header.php';
+require_once 'inc/preload.php';
 ?>
     <div class="container body">
       <div class="main_container">

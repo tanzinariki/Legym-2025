@@ -79,7 +79,7 @@ require_once 'inc/header_section.php';
                                             <p class="holiday-date">May 26, 2025</p>
                                         </div>
                                         <div class="holiday-gym-status">
-                                            <button class="btn btn-info btn-sm holiday-limited-hours-btn">Limited Hours</button>
+                                            <button class="btn btn-info btn-sm holiday-limited-hours-btn">09:00 AM - 06:00 PM</button>
                                         </div>
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@ require_once 'inc/header_section.php';
                                             <p class="holiday-date">July 4, 2025</p>
                                         </div>
                                         <div class="holiday-gym-status">
-                                            <button class="btn btn-info btn-sm holiday-limited-hours-btn">Limited Hours</button>
+                                            <button class="btn btn-info btn-sm holiday-limited-hours-btn">09:00 AM - 06:00 PM</button>
                                         </div>
                                     </div>
                                 </div>

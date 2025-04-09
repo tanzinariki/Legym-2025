@@ -49,7 +49,20 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Custom Theme Scripts -->
-    <script src="../build/js/custom.min.js"></script>
+    <script src="../build/js/custom.js"></script>
+    <script>
+      (function($){
+        /*--------------------------------------------------------
+        / 14. Preloder
+        /----------------------------------------------------------*/
+        $(window).load(function(){
+            var preload = $('.preloader');
+            if(preload.length > 0){
+                preload.delay(800).fadeOut('slow');
+            }
+        });
+      })(jQuery);
+    </script>
 	
   </body>
 </html>

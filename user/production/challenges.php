@@ -1,12 +1,18 @@
 <?php
 session_start();
 
-if (isset($_SESSION['user_id'])) {
-    $fullname = $_SESSION['first_name'].' '.$_SESSION['last_name'];
-} else {
-    header("Location: http://localhost/legym/login.php");
-    exit;
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+	header("Location: http://localhost/legym/login.php");
+	exit;
 }
+
+if ($_SESSION['status'] != 'Active') {
+	header("Location: http://localhost/legym/user/production/dashboard.php");
+	exit;
+}
+
+$fullname = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];
 
 require_once 'inc/header.php';
 require_once 'db_connect.php';
@@ -106,7 +112,7 @@ require_once 'inc/header.php';
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <form id="challenge-form" method="POST" action="challenges_process.php" class="form-horizontal form-label-left">
+                            <form id="challenge-form"  class="form-horizontal form-label-left">
                                 <div class="form-group">
                                     <label class="control-label col-md-12" for="challenge-name">
                                         Challenge <span class="required">*</span>
@@ -134,6 +140,27 @@ require_once 'inc/header.php';
                                 </div>
 
                                 <?php if ($selectedChallenge): ?>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-12">
+                                            Assigned Trainer
+                                        </label>
+                                        <div class="col-md-12">
+                                            <h2 
+                                                style="margin-top: 10px;" 
+                                                readonly 
+                                                style="height: auto;"
+                                            >
+                                            <?php
+                                            $sql = "SELECT * FROM trainer WHERE id = ?";
+                                            $qr = $conn->prepare($sql);
+                                            $qr->bind_param("i", $selectedChallenge['trainer_id']);
+                                            $qr->execute();
+                                            $trainer = $qr->get_result()->fetch_assoc();
+                                            ?>
+                                            <?= htmlspecialchars($trainer['trainer_name']) ?></h2>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group">
                                         <label class="control-label col-md-12">
                                             Challenge Description
@@ -223,7 +250,7 @@ require_once 'inc/header.php';
                                 <?php if ($selectedChallenge): ?>
                                     <div class="form-group">
                                         <div class="col-md-12">
-                                            <button type="submit" class="btn btn-success" style="float: right;">
+                                            <button type="button" class="btn btn-success join-btn" style="float: right;">
                                                 Join Challenge
                                             </button>
                                         </div>
@@ -262,5 +289,59 @@ $(document).ready(function() {
             );
         }
     });
+
+    // Join
+	$(document).on('click', '.join-btn', function() {
+		var btn = $(this);
+		var challenge_id = $('#challenge-name').val();
+        console.log(challenge_id);
+		if (typeof challenge_id !== 'undefined' && challenge_id !== null && challenge_id !== '') {
+			Swal.fire({
+				title: "Are you sure?",
+				text: "After joining the challenge you cannot leave!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Join!"
+			}).then((result) => {
+				if (result.isConfirmed) {
+					$.ajax({
+						url: 'challenges_process.php',
+						type: 'POST',
+						dataType: 'json',
+						data: { action: 'join', challenge_id: challenge_id },
+						success: function(response) {
+							console.log(response);
+							if(response.success) {
+								Swal.fire({
+									title: "Joined!",
+									text: "You have joined the challenge successfully.",
+									icon: "success"
+								}).then(() => {
+									//window.location.href = "challenges.php";
+								});
+							} else {
+                                Swal.fire({
+									title: "Oops!",
+									text: "You\'ve already joined this challenge!",
+									icon: "info"
+								}).then(() => {
+									// window.location.href = "challenges.php";
+								});
+                            }
+						}
+					});
+				}
+			});
+		} else {
+			Swal.fire({
+				title: "Error!",
+				text: response.message,
+				icon: "error",
+				confirmButtonText: "OK"
+			});
+		}
+	});
 });
 </script>
