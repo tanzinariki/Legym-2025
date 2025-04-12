@@ -1,0 +1,1 @@
+LeGym is a user-centered web application designed to streamline gym management and improve the fitness experience for students at Concordia University. Built as part of a Human-Computer Interaction course project, the platform focuses on usability, accessibility, and engagement through intuitive design and essential gym-related features.
